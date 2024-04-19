@@ -14,47 +14,38 @@ GerSolar = np.interp(np.linspace(0, len(GerSolar) - 1, 96), range(len(GerSolar))
 
 # Contrle da Micro Rede
 for i in range(96):
-    # Enviar energia gerada para a carga
-    EnergRest = GerSolar[i] - Carga[i]
-    print(EnergRest)
-    # Carga está sendo atendida?
-    if EnergRest < 0 :
-        # Descarregar energia da bateria na carga
-        print("Bateria-1 = ", Bateria[i-1])
-        EnergRest = Bateria[i-1] - EnergRest
-        # Carga está sendo atendida?
-        if EnergRest < 0:
-            # Comprar energia da rede para a carga
-            Rede[i] = EnergRest
+    eRest = Carga[i] - GerSolar[i] # Energia que sobrará caso vá para carga
+    if eRest < 0: # Carga atendida
+        if Bateria[i-1] == MaxBateria: # Verifica se a bateria está cheia
+            Rede[i] = -eRest # Vende energia para a rede
+            Bateria[i] = Bateria[i-1]
         else:
-            continue
-    else:
-        # Bateria está cheia?
-        if Bateria[i-1] >= MaxBateria:
-            # Vender energia restante na rede
-            Rede[i] = EnergRest
+            Bateria[i] = Bateria[i-1] + -(eRest)  # Geração alimenta a bateria
+    else: # Carga não foi atendida
+        if Bateria[i-1] == 0:
+            Rede[i]= -eRest # Se a bateria estiver sem carga, compra energia da rede
         else:
-            # Envia energia gerada para bateria
-            Bateria[i] = Bateria[i-1] + EnergRest
+            Bateria[i] = Bateria[i-1] - eRest # Descarrega bateria na carga
 
     # Controlador da bateria
     if Bateria[i] > MaxBateria:
-        Bateria[i] = MaxBateria
-        
-print('Bateria = ', Bateria, "\n")
-print('Rde = ', Rede)
+        Bateria[i] = MaxBateria # Estado Máximo
+    elif Bateria[i] < 0:
+        Bateria[i] = 0 # Estado Mínimo
 
-plt.plot(Horas, Bateria)
-plt.show()
 # Plotagem do Gráfico
 plt.bar([i for i in range(len(Horas))], Carga, label='Carga expandida',width=0.25)
 plt.bar([i + 0.25 for i in range(len(Horas))], GerSolar, label='Geração expandida', color='limegreen',width=0.25)
 plt.bar([i + 0.5 for i in range(len(Horas))], Rede, label='Rede', color='gold',width=0.25)
 plt.bar([i + 0.75 for i in range(len(Horas))], Bateria, label='Bateria', color='red',width=0.25)
+plt.plot([i + 0.75 for i in range(len(Horas))], Bateria, color = 'red')
+plt.plot([i + 0.75 for i in range(len(Horas))], Rede, color = 'gold')
+plt.plot([i + 0.75 for i in range(len(Horas))], Carga)
+plt.plot([i + 0.75 for i in range(len(Horas))], GerSolar, color = 'limegreen')
 plt.axhline(0, color='black', linestyle='-')
 plt.xlabel("Horas")
 plt.ylabel("Energia")
-plt.title("Estudo de Caso 1")
-plt.grid(color="grey", linestyle="-", linewidth=0.1)
+plt.title("Estudo de Caso 2")
+plt.grid(color="grey", linestyle="-", linewidth=0.001)
 plt.legend()
 plt.show()

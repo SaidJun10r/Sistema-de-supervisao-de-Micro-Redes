@@ -2,7 +2,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 Horas = [i for i in np.linspace(0, 23.75, 96)]
-print(Horas)
 Carga = [0, 0, 0, 0, 0, 0, 10, 100, 500, 100, 10, 1000, 2000, 1000, 100, 10, 10, 10, 100, 500, 1000, 2000, 500, 10]
 GerSolar = [0, 0, 0, 0, 0, 0, 5, 10, 100, 1000, 2000, 3000, 5000, 4000, 3000, 2000, 1000, 1000, 100, 5, 0, 0, 0, 0]
 Rede = [i - i for i in Horas]
@@ -19,10 +18,10 @@ for i in range(96):
 
     if Bateria[i-1] == MaxBateria or GerSolar[i] < Carga[i]: # Verifica se a bateria está cheia
         if eRest > 0:
-            # Algo aqui dentro ta tornando a bateria zero
-            Bateria[i] = Bateria[i-1] - eRest # Descarrega bateria na carga
             if Bateria[i-1] == 0:
                 Rede[i]= -eRest # Se a bateria estiver sem carga, compra energia da rede
+            else:
+                Bateria[i] = Bateria[i-1] - eRest # Descarrega bateria na carga
         else:
             Rede[i] = -eRest # Vende Energia Restante pra Rede
             Bateria[i] = Bateria[i-1] # Salva estado de carga da bateria

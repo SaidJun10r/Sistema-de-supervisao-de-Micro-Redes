@@ -1,29 +1,59 @@
-# Bibliotecas
 from matplotlib import pyplot as plt
+import numpy as np
 
-# Matrizes iniciais
-horas = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-GerSolar = [0, 0, 0, 0, 0, 0, 5, 10, 100, 1000, 2000, 3000, 5000, 4000, 3000, 2000, 1000, 1000, 100, 5, 0, 0, 0, 0]
-Bateria = [0, 0, 0, 0, 0, 0, 5, 15, 115, 1115, 3115, 4000, 4000, 4000, 4000, 4000, 4000, 4000, 4000, 3505, 2505, 1505, 0, 0]
+Horas = [i for i in np.linspace(0, 23.75, 96)]
 Carga = [0, 0, 0, 0, 0, 0, 10, 100, 500, 100, 10, 1000, 2000, 1000, 100, 10, 10, 10, 100, 500, 1000, 2000, 500, 10]
-Rede = [0, 0, 0, 0, 0, 0, -10, -100, -500, -100, -10, 2000, 3000, 3000, 2900, 1990, 990, 990, 0, 0, 0, -495, -500, -10]
-Previsao = [0, 0, 0, 0, 0, 0, 5, 10, 100, 1000, 1000, 2000, 1000, 1000, 2000, 1000, 100, 100, 100, 5, 0, 0, 0, 0]
+GerSolar = [0, 0, 0, 0, 0, 0, 5, 10, 100, 1000, 2000, 3000, 5000, 4000, 3000, 2000, 1000, 1000, 100, 5, 0, 0, 0, 0]
+CargaVE =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Rede = [i - i for i in Horas]
+Bateria = [i - i for i in Horas]
+MaxBateria = 4000
+HorarioVE = 12
+
+# Interpolação
+Carga = np.interp(np.linspace(0, len(Carga) - 1, 96), range(len(Carga)), Carga)
+GerSolar = np.interp(np.linspace(0, len(GerSolar) - 1, 96), range(len(GerSolar)), GerSolar)
+CargaVE = np.interp(np.linspace(0, len(CargaVE) - 1, 96), range(len(CargaVE)), CargaVE)
+
+# Contrle da Micro Rede
+for i in range(96):
+    eRest = Carga[i] - GerSolar[i] # Energia que sobrará caso vá para carga
+
+    if Bateria[i-1] == MaxBateria: #or GerSolar[i] < Carga[i]: # Verifica se a bateria está cheia
+        if HorarioVE == Horas[i]:
+            Bateria[i] = Bateria[i-1] - CargaVE[i]# Descarrega bateria na carga
+            Rede[i] = -eRest
+        if eRest > 0: # Carga não está atendida
+            Rede[i]= -eRest # Compra energia da rede para carga
+        else: # Carga atendida e bateria cheia
+            Rede[i] = -eRest # Vende Energia Restante pra Rede
+        if HorarioVE != Horas[i]:
+                Bateria[i] = Bateria[i-1] # Salva estado de carga da bateria
+    else: # Bateria não está cheia
+        Bateria[i] = Bateria[i-1] + GerSolar[i]  # Geração alimenta a bateria
+        Rede[i] = -Carga[i] # Rede alimenta a carga
+
+            # Controlador da bateria
+    if Bateria[i] > MaxBateria:
+        Bateria[i] = MaxBateria # Estado Máximo
+    elif Bateria[i] < 0:
+        Bateria[i] = 0 # Estado Mínimo
 
 
-
-# Plotagem do gráfico
-plt.bar(horas, GerSolar, label='Geração', width=.25)
-plt.bar([i + 0.25 for i in horas], Bateria, label='Bateria', color='r',width=.25)
-plt.bar([i + 0.5 for i in horas], Carga, label='Carga', color='limegreen',width=.25)
-plt.bar([i + 0.75 for i in horas], Rede, label='Rede', color='gold',width=.25)
-plt.xticks(range(min(horas), max(horas)+1))
-plt.yticks(range(min(Rede), max(max(GerSolar), max(Bateria), max(Carga), max(Rede))+1, 500))
-plt.axis([0, 24, min(Rede), max(max(GerSolar), max(Bateria), max(Carga), max(Rede))])
-plt.legend()
+# Plotagem do Gráfico
+plt.bar([i for i in range(len(Horas))], Carga, label='Carga expandida',width=0.25)
+plt.bar([i + 0.25 for i in range(len(Horas))], GerSolar, label='Geração expandida', color='limegreen',width=0.25)
+plt.bar([i + 0.5 for i in range(len(Horas))], Rede, label='Rede', color='gold',width=0.25)
+plt.bar([i + 0.75 for i in range(len(Horas))], Bateria, label='Bateria', color='red',width=0.25)
+plt.plot([i + 0.75 for i in range(len(Horas))], Bateria, color = 'red')
+plt.plot([i + 0.75 for i in range(len(Horas))], Rede, color = 'gold')
+plt.plot([i + 0.75 for i in range(len(Horas))], Carga)
+plt.plot([i + 0.75 for i in range(len(Horas))], GerSolar, color = 'limegreen')
+plt.plot([i + 0.75 for i in range(len(Horas))], CargaVE, color = 'lightblue')
 plt.axhline(0, color='black', linestyle='-')
 plt.xlabel("Horas")
 plt.ylabel("Energia")
-plt.title("Estudo de Caso 1")
-plt.grid(color="grey", linestyle="-", linewidth=0.1)
+plt.title("Estudo de Caso 2")
+plt.grid(color="grey", linestyle="-", linewidth=0.001)
+plt.legend()
 plt.show()
-
