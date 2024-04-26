@@ -5,29 +5,15 @@ Horas = [i for i in np.linspace(0, 23.75, 96)]
 Carga = [0, 0, 0, 0, 0, 0, 10, 100, 500, 100, 10, 1000, 2000, 1000, 100, 10, 10, 10, 100, 500, 1000, 2000, 500, 10]
 GerSolar = [0, 0, 0, 0, 0, 0, 5, 10, 100, 1000, 2000, 3000, 5000, 4000, 3000, 2000, 1000, 1000, 100, 5, 0, 0, 0, 0]
 CargaVE =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-previsao = [0, 0, 0, 0, 0, 0, 0, -90, -400, 900, 1990, 0, 0, 3000, -100, 990, 990, -1010, 0, -495, -1000, -2000, -500, -10]
 Rede = [i - i for i in Horas]
 Bateria = [i - i for i in Horas]
 MaxBateria = 4000
 HorarioVE = 12
-acumulado = 0
-index = 0
 
 # Interpolação
 Carga = np.interp(np.linspace(0, len(Carga) - 1, 96), range(len(Carga)), Carga)
 GerSolar = np.interp(np.linspace(0, len(GerSolar) - 1, 96), range(len(GerSolar)), GerSolar)
 CargaVE = np.interp(np.linspace(0, len(CargaVE) - 1, 96), range(len(CargaVE)), CargaVE)
-previsao = np.interp(np.linspace(0, len(previsao) - 1, 96), range(len(previsao)), previsao)
-
-# Cálculo da hora de carregamento
-for i in range(96):
-    if CargaVE[i] != 0:
-        index=i
-while acumulado <= MaxBateria:
-    index -= 1
-    acumulado += previsao[index]
-    print(index, acumulado)
-print(acumulado)
 
 # Contrle da Micro Rede
 for i in range(96):

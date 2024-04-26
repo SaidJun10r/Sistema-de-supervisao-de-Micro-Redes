@@ -3,6 +3,7 @@ import numpy as np
 import csv
 
 Horas = [i for i in np.linspace(0, 23.75, 96)]
+Agendamento = np.zeros((96,), dtype=int)
 Carga = [0, 0, 0, 0, 0, 0, 10, 100, 500, 100, 10, 1000, 2000, 1000, 100, 10, 10, 10, 100, 500, 1000, 2000, 500, 10]
 GerSolar = [0, 0, 0, 0, 0, 0, 5, 10, 100, 1000, 2000, 3000, 5000, 4000, 3000, 2000, 1000, 1000, 100, 5, 0, 0, 0, 0]
 Rede = [i - i for i in Horas]
@@ -17,12 +18,12 @@ def write_vectors_to_csv(Horas, expanded_carga , expanded_geracao, filename):
         raise ValueError("TAMANHOS DOS VETORES DIFERENTES!")
 
     # juntar vetores
-    rows = zip(Horas, expanded_carga, expanded_geracao)
+    rows = zip(Horas, expanded_carga, expanded_geracao, Agendamento)
 
     # Grava no arquivo csv
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Horas', 'Carga', 'Geracao'])  # Escrever cabecalhos
+        writer.writerow(['Horas', 'Carga', 'Geracao', 'Agendamento'])  # Escrever cabecalhos
         writer.writerows(rows)
 
 # Nome do arquivo

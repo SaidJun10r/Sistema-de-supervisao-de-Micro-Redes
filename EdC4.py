@@ -8,10 +8,10 @@ CargaVE =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5000, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 previsao = [0, 0, 0, 0, 0, 0, 0, -90, -400, 900, 1990, 0, 0, 3000, -100, 990, 990, -1010, 0, -495, -1000, -2000, -500, -10]
 Rede = [i - i for i in Horas]
 Bateria = [i - i for i in Horas]
+acumulado = 0
 MaxBateria = 4000
 HorarioVE = 12
-acumulado = 0
-index = 0
+index = 1
 
 # Interpolação
 Carga = np.interp(np.linspace(0, len(Carga) - 1, 96), range(len(Carga)), Carga)
