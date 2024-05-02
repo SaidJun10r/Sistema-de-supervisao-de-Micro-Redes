@@ -12,7 +12,7 @@ MaxBateria = 4000
 Carga = np.interp(np.linspace(0, len(Carga) - 1, 96), range(len(Carga)), Carga)
 GerSolar = np.interp(np.linspace(0, len(GerSolar) - 1, 96), range(len(GerSolar)), GerSolar)
 
-# Contrle da Micro Rede
+# Controle da Micro Rede
 for i in range(96):
     eRest = Carga[i] - GerSolar[i] # Energia que sobrará caso vá para carga
     if eRest < 0: # Carga atendida

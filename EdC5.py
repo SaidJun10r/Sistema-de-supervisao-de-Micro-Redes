@@ -39,7 +39,6 @@ for i in range(96):
     elif Bateria[i] < 0:
         Bateria[i] = 0 # Estado Mínimo
 
-
 # Plotagem do Gráfico
 plt.bar([i for i in range(len(Horas))], Carga, label='Carga expandida',width=0.25)
 plt.bar([i + 0.25 for i in range(len(Horas))], GerSolar, label='Geração expandida', color='limegreen',width=0.25)
