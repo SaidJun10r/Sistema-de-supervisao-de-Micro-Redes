@@ -12,7 +12,7 @@ horaDescarg = 0
 # Cálculo da hora de carregamento
 for i in range(96):
     if bd['CargaVE'][i] != 0 and horaDescarg == 0: # Verifica se há um carregamento
-        horaDescarg = i
+        horaDescarg = i 
         horaCarg = i 
 while acumulado <= MaxBateria:
     horaCarg -= 1
