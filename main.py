@@ -1,53 +1,179 @@
-from leitor import leitorcsv
 import modelos
-from grafico import grafico
 import customtkinter
 from customtkinter import filedialog
+from tkinter import * 
+from matplotlib import pyplot as plt
+from matplotlib.figure import Figure 
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
+import pandas as pd
 
-def button_function():
-    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calculo()
-    grafico(horas, carga, gerSolar, cargaVE==None, bateria, rede)
-
-def file_path():
+def leitorcsv():
     file_path = filedialog.askopenfilename()
-    return file_path
+    bd = pd.read_csv(file_path) # Dados da rede
+    horas = bd['Horas']
+    carga = bd['Carga']
+    gerSolar = bd['GerSolar']
+    cargaVE = bd['CargaVE']
+    previsao = bd['Previsao']
 
-def dados_csv():
-    dado_csv = leitorcsv(file_path())
-    return dado_csv
+    return horas, carga, gerSolar, cargaVE, previsao
 
-def calculo():
-    horas, carga, gerSolar, cargaVE, previsao = dados_csv()
-    bateria, rede = modelos.edc2(horas, carga, gerSolar, 4000)
+def calBatRede(dados_csv, metodo=1):
+    horas, carga, gerSolar, cargaVE, previsao = leitorcsv()
+
+    match metodo:
+        case 1:
+            bateria, rede = modelos.edc1(horas, carga, gerSolar, 4000)
+        case 2:
+            bateria, rede = modelos.edc2(horas, carga, gerSolar, 4000)
+        case 3:
+            bateria, rede = modelos.edc3(horas, carga, gerSolar, cargaVE, previsao, 4000) 
+        case 4:
+            bateria, rede = modelos.edc3(horas, carga, gerSolar, cargaVE, previsao, 4000)
+        case 5:     
+            bateria, rede = modelos.edc3(horas, carga, gerSolar, cargaVE, previsao, 4000)
     return horas, carga, gerSolar, cargaVE, previsao, bateria, rede
-#grafico(horas, carga, gerSolar, cargaVE==None, bateria, rede)
 
-customtkinter.set_appearance_mode("System")  # Modes: system (default), light, dark
-customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
+def menudeopcoes(metodo):
+    match metodo:
+        case "Método de controle 1":
+                metodo = 1
+        case "Método de controle 2":
+                metodo = 2
+        case "Método de controle 3":
+                metodo = 3
+        case "Método de controle 4":
+                metodo = 4
+        case "Método de controle 5":
+                metodo = 5
+    return metodo
+
+def plot(dadosCalculo=[]): 
+
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede(leitorcsv)
+
+    # the figure that will contain the plot 
+    fig = Figure(figsize = (2, 2), 
+                 dpi = 100) 
+    
+    grafControle = fig.add_subplot(111)
+    grafControle.plot([i for i in range(len(horas))], carga)
+    
+    grafControle.plot([i + 0.2 for i in range(len(horas))], gerSolar, color = 'limegreen')
+    grafControle.plot([i + 0.4 for i in range(len(horas))], rede, color = 'gold')
+    grafControle.plot([i + 0.6 for i in range(len(horas))], bateria, color = 'red')
+    grafControle.plot([i + 0.8 for i in range(len(horas))], cargaVE, color = 'lightblue')
+
+    grafControle.bar([i for i in range(len(horas))], carga, label='Carga expandida',width=0.2)
+    grafControle.bar([i + 0.2 for i in range(len(horas))], gerSolar, label='Geração expandida', color='limegreen',width=0.2)
+    grafControle.bar([i + 0.4 for i in range(len(horas))], rede, label='Rede', color='gold',width=0.2)
+    grafControle.bar([i + 0.6 for i in range(len(horas))], bateria, label='Bateria', color='red',width=0.2)
+    grafControle.bar([i + 0.8 for i in range(len(horas))], cargaVE, label='Carga do VE',color = 'lightblue', width=0.2)
+  
+    grafControle.set_xlabel('Horas')
+    grafControle.set_ylabel("Energia")
+    grafControle.axhline(0, color='black', linestyle='-')
+    grafControle.set_title("Gráfico da Micro Rede")
+    grafControle.grid(color="grey", linestyle="-", linewidth=0.001)
+    grafControle.legend()
+
+    # Dados dinamicos mostrados
+    dadosMR = calBatRede(leitorcsv)
+    dadosDinamicos(dadosMR)
+    mediaDados(dadosMR)
+
+
+    # creating the Tkinter canvas 
+    # containing the Matplotlib figure 
+    canvas = FigureCanvasTkAgg(fig, master = app)   
+    canvas.draw() 
+  
+    # placing the canvas on the Tkinter window 
+    canvas.get_tk_widget().grid(row=0, rowspan=3, column=1, columnspan=2, padx=20, pady=10, sticky="news") 
+
+def dadosDinamicos(dadosMR):
+    # Potência Máxima
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = dadosMR
+    somCarga, somgerSolar, somBateria, somRede = 0, 0, 0, 0
+    for i in range(len(horas)):
+        somCarga += carga[i]
+        somgerSolar += gerSolar[i]
+        somBateria += bateria[i]
+        somRede += rede[i]
+    somaMR = f"Soma Carga: {somCarga}\nSoma Geração Solar: {somgerSolar}\nSoma Bateria: {somBateria}\nSoma Rede: {somRede}"
+    label = customtkinter.CTkLabel(master=app,
+                                text=f"{somaMR}",
+                                font= ('Roboto', 20, 'bold'),
+                                width=200,
+                                height=25,
+                                corner_radius=8)
+    label.grid(row=3, column=1, padx=2, pady=1, sticky="news")
+
+def mediaDados(dadosMR):
+    # Potência Máxima
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = dadosMR
+    medCarga, medgerSolar, medBateria, medRede = 1, 1, 1, 1
+    for i in range(len(horas)):
+        medCarga += carga[i]/medCarga
+        medgerSolar += gerSolar[i]/medgerSolar
+        medBateria += bateria[i]/medBateria
+        medRede += rede[i]/medRede
+    somaMR = f"Média Carga: {medCarga}\nMédia Geração Solar: {medgerSolar}\nMédia Bateria: {medBateria}\nMédia Rede: {medRede}"
+    label = customtkinter.CTkLabel(master=app,
+                                text=f"{somaMR}",
+                                font= ('Roboto', 20, 'bold'),
+                                width=200,
+                                height=25,
+                                corner_radius=8)
+    label.grid(row=3, column=2, padx=2, pady=1, sticky="news")
+
+
+
+# Dados Estaticos
+somaMR = 0
+
+# Customizar TKinter
+customtkinter.set_appearance_mode("light")  # Modes: system (default), light, dark
+customtkinter.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
+# Fonte do programa
+fonte_escrita = 'Roboto', 12, 'bold'
+
+# Cria a janela e os parametros
 app = customtkinter.CTk()  # create CTk window like you do with the Tk window
-app.geometry("540x360")
+# app.attributes("-fullscreen", True)
+app.geometry("800x500")
 app.title("TCC II")
 
-app.grid_columnconfigure((0), weight=1)
-app.grid_columnconfigure((1), weight=4)
-app.grid_rowconfigure((0), weight=4)
-app.grid_rowconfigure((1), weight=1)
+app.grid_columnconfigure((0, 1), weight=1)
+app.grid_columnconfigure((2), weight=5)
+app.grid_rowconfigure((0, 1, 2, 3), weight=1)
 
 # Botão
-button = customtkinter.CTkButton(master=app, text="Selecionar CSV", command=dados_csv)
-button.grid(row=0, column=1, padx=20, pady=10, sticky="news")
+button2 = customtkinter.CTkButton(master=app, 
+                                  text="Selecionar CSV", 
+                                  font=fonte_escrita,
+                                  command= leitorcsv)
+button2.grid(row=0, column=0, padx=2, pady=1)
 
-# Botão
-button2 = customtkinter.CTkButton(master=app, text="Selecionar CSV", command=dados_csv)
-button2.grid(row=0, column=0, padx=20, pady=10, sticky="news")
 
-# Botão
-button3 = customtkinter.CTkButton(master=app, text="Estudo de Caso 2", command=button_function)
-button3.grid(row=1, column=1, padx=20, pady=10, sticky="news")
+optionmenu_1 = customtkinter.CTkOptionMenu(app, 
+                                           dynamic_resizing=True, 
+                                           font=fonte_escrita,
+                                           values=["Método de controle 1", 
+                                                   "Método de controle 2",
+                                                   "Método de controle 3",
+                                                   "Método de controle 4",
+                                                   "Método de controle 5"],
+                                                   command=menudeopcoes)
+optionmenu_1.grid(row=1, column=0, padx=2, pady=(2, 1))
 
-# Botão
-button4 = customtkinter.CTkButton(master=app, text="Estudo de Caso 2", command=button_function)
-button4.grid(row=1, column=0, padx=20, pady=10, sticky="news")
+
+
+button2 = customtkinter.CTkButton(master=app, 
+                                  text="Plotar Gráfico", 
+                                  font=fonte_escrita,
+                                  command=plot)
+button2.grid(row=2, column=0, padx=2, pady=1)
 
 app.mainloop()
