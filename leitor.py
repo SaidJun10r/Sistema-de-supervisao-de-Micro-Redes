@@ -1,7 +1,7 @@
 import pandas as pd
 
-def leitorcsv(dados: str):
-    bd = pd.read_csv(dados) # Dados da rede
+def leitorcsv(file_path: str):
+    bd = pd.read_csv(file_path) # Dados da rede
     horas = bd['Horas']
     carga = bd['Carga']
     gerSolar = bd['GerSolar']
