@@ -4,9 +4,8 @@ from grafico import grafico
 import customtkinter
 from customtkinter import filedialog
 
-def button_function(dados_csv, bateria, rede):
-    horas, carga, gerSolar, cargaVE, previsao = dados_csv
-    calculo(dados_csv)
+def button_function():
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calculo()
     grafico(horas, carga, gerSolar, cargaVE==None, bateria, rede)
 
 def file_path():
@@ -14,13 +13,13 @@ def file_path():
     return file_path
 
 def dados_csv():
-    dados_csv = leitorcsv(file_path())
-    return dados_csv
+    dado_csv = leitorcsv(file_path())
+    return dado_csv
 
-def calculo(dados_csv):
-    horas, carga, gerSolar, cargaVE, previsao = dados_csv
+def calculo():
+    horas, carga, gerSolar, cargaVE, previsao = dados_csv()
     bateria, rede = modelos.edc2(horas, carga, gerSolar, 4000)
-    print(bateria, rede)
+    return horas, carga, gerSolar, cargaVE, previsao, bateria, rede
 #grafico(horas, carga, gerSolar, cargaVE==None, bateria, rede)
 
 customtkinter.set_appearance_mode("System")  # Modes: system (default), light, dark
