@@ -38,7 +38,7 @@ def calBatRede(leitorcsv):
 
     return horas, carga, gerSolar, cargaVE, previsao, bateria, rede
 
-def plot(): 
+def grafMicro(): 
 
     horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede(leitorcsv)
 
@@ -81,11 +81,16 @@ def plot():
 
     # creating the Tkinter canvas 
     # containing the Matplotlib figure 
-    canvas = FigureCanvasTkAgg(fig, master = app)   
+    canvas = FigureCanvasTkAgg(fig, master = tabview.tab("Gráfico da Micro Rede"))   
     canvas.draw() 
   
     # placing the canvas on the Tkinter window 
-    canvas.get_tk_widget().grid(row=0, rowspan=3, column=1, columnspan=2, padx=(30, 30), pady=(30, 20), sticky="news") 
+    canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
+
+def grafGerPrev():
+    pass
+
+
 
 def dadosDinamicos(dadosMR):
     # Potência Máxima
@@ -137,12 +142,12 @@ fonte_escrita = 'Roboto', 12, 'bold'
 # Cria a janela e os parametros
 app = customtkinter.CTk()  # create CTk window like you do with the Tk window
 # app.attributes("-fullscreen", True)
-app.geometry("1070x670")
+app.geometry("1250x860")
 app.iconbitmap('images/Dístico.png')
 app.title("TCC II")
 
 app.grid_columnconfigure((0, 1), weight=1)
-app.grid_columnconfigure((2), weight=1)
+app.grid_columnconfigure((2), weight=10)
 app.grid_rowconfigure((0, 1, 2, 3), weight=1)
 
 
@@ -151,6 +156,8 @@ frame_botoes = customtkinter.CTkFrame(app)
 frame_botoes.grid(row=0, column=0, rowspan=3, padx=(20, 20), pady=(20, 10), sticky="nsew")
 frame_graf = customtkinter.CTkFrame(app)
 frame_graf.grid(row=0, rowspan=3, column=1, columnspan=2, padx=(20, 20), pady=(20, 10), sticky="news")
+frame_graf.grid_columnconfigure((0), weight=1)
+frame_graf.grid_rowconfigure((0), weight=1)
 frame_dados = customtkinter.CTkFrame(app)
 frame_dados.grid(row=3, column=1, columnspan=2, padx=(20, 20), pady=(20, 10), sticky="news")
 frame_dados.grid_columnconfigure((0, 1), weight=1)
@@ -158,11 +165,21 @@ frame_dados.grid_rowconfigure(0, weight=1)
 frame_logo = customtkinter.CTkFrame(app)
 frame_logo.grid(row=3, column=0, padx=(20, 20), pady=(20, 10), sticky="news")
 
+        # create tabview
+tabview = customtkinter.CTkTabview(frame_graf, width=250)
+tabview.grid(row=0, column=0, padx=(20, 20), pady=(0, 20), sticky="nsew")
+tabview.add("Gráfico da Micro Rede")
+tabview.add("Previsão x Geração")
+tabview.add("Carga VE x Geração")
+tabview.tab("Gráfico da Micro Rede").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
+tabview.tab("Gráfico da Micro Rede").grid_rowconfigure(0, weight=1)
+tabview.tab("Previsão x Geração").grid_columnconfigure(0, weight=1)
+tabview.tab("Carga VE x Geração").grid_columnconfigure(0, weight=1)
+
 # Logo UFSM
 logo_ufsm = customtkinter.CTkImage(light_image=Image.open('images/Dístico.png'), dark_image=Image.open('images/Dístico.png'), size=(200, 200))
-ufsm_label = customtkinter.CTkLabel(app, text='', image=logo_ufsm, bg_color='transparent')
+ufsm_label = customtkinter.CTkLabel(app, text='', image=logo_ufsm, bg_color='#e5e5e5')
 ufsm_label.grid(row=3, column=0, pady=10)
-
 # Botão
 button2 = customtkinter.CTkButton(master=app, 
                                   text="Selecionar CSV", 
@@ -186,7 +203,7 @@ optionmenu_1.grid(row=1, column=0)
 button2 = customtkinter.CTkButton(master=app, 
                                   text="Plotar Gráfico", 
                                   font=fonte_escrita,
-                                  command=plot)
+                                  command=grafMicro)
 button2.grid(row=2, column=0)
 
 app.mainloop()
