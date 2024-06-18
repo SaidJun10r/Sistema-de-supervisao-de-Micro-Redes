@@ -39,61 +39,20 @@
 # optionmenu_1 = customtkinter.CTkOptionMenu(app, dynamic_resizing=False, values=["Value 1", "Value 2", "Value Long Long Long"])
 # optionmenu_1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-import tkinter as tk
-from tkinter import filedialog
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import customtkinter
+import tkinter
+window=tkinter.Tk()
+window.geometry("700x400")
 
-class CSVPlotter:
+def vervalor():
+    print(selection)
 
 
-    def __init__(self, root):
-        self.root = root
-        root.title("CSV Plotter")
+selection=0
+option_Menu = tkinter.StringVar(window)
+options = ("a","b","c")
+menu = tkinter.OptionMenu(window,option_Menu,*options, command=vervalor())
+menu.grid(row=2,column=2)
+option_Menu.set(2)
+selection=option_Menu.get()
 
-        self.plot_types = ['Line Plot', 'Bar Plot', 'Scatter Plot']
-        self.plot_type_var = tk.StringVar(value=self.plot_types[0])
-        plot_menu = tk.OptionMenu(self.root, self.plot_type_var, *self.plot_types, command=self.update_plot)
-        plot_menu.pack(padx=10, pady=10)
-
-        load_button = tk.Button(self.root, text='Load CSV', command=self.load_csv)
-        load_button.pack(padx=10, pady=10)
-
-        self.fig, self.ax = plt.subplots()
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
-        self.widget = self.canvas.get_tk_widget()
-        self.widget.pack(padx=10, pady=10)
-
-        self.df = None
-
-    def load_csv(self):
-        file_path = filedialog.askopenfilename()
-        if file_path:
-            self.df = pd.read_csv(file_path)
-            self.update_plot()
-
-    def update_plot(self, event=None):
-        if self.df is not None:
-            plot_type = self.plot_type_var.get()
-            x = self.df.columns[0]
-            y = self.df.columns[1]
-
-            self.ax.clear()
-            if plot_type == 'Line Plot':
-                self.ax.plot(self.df[x], self.df[y], label=f'{y} vs {x}')
-            elif plot_type == 'Line Plot':
-                self.ax.bar(self.df[x], self.df[y], label=f'{y} vs {x}')
-            elif plot_type == 'Line Plot':
-                self.ax.scatter(self.df[x], self.df[y], label=f'{y} vs {x}')
-
-            self.ax.set_xlabel(x)
-            self.ax.set_ylabel(y)
-            self.ax.legend()
-            self.canvas.draw()
-
-if __name__ == '__main__':
-    root = tk.Tk()
-    app = CSVPlotter(root)
-    root.mainloop()
+tkinter.mainloop()
