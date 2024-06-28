@@ -8,6 +8,7 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 import pandas as pd
 from PIL import Image
 
+
 def leitorcsv():
     file_path = filedialog.askopenfilename()
     bd = pd.read_csv(file_path) # Dados da rede
@@ -83,13 +84,42 @@ def grafMicro():
     # containing the Matplotlib figure 
     canvas = FigureCanvasTkAgg(fig, master = tabview.tab("Gráfico da Micro Rede"))   
     canvas.draw() 
+
+    #PUXANDO GERXPREV
+    grafGerPrev()
   
     # placing the canvas on the Tkinter window 
     canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
 
 def grafGerPrev():
-    pass
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede(leitorcsv)
 
+    # the figure that will contain the plot 
+    fig = Figure(figsize = (2, 2), 
+                 dpi = 100) 
+    
+    grafControle = fig.add_subplot(111)
+    
+    grafControle.plot([i for i in range(len(horas))], previsao, color = 'violet')
+    grafControle.plot([i + 0.2 for i in range(len(horas))], gerSolar, color = 'limegreen')
+
+    grafControle.bar([i for i in range(len(horas))], previsao, label='Previsão', color = 'violet', width=0.2)
+    grafControle.bar([i + 0.2 for i in range(len(horas))], gerSolar, label='Geração', color='limegreen', width=0.2)
+
+    grafControle.set_xlabel('Horas')
+    grafControle.set_ylabel("Energia")
+    grafControle.axhline(0, color='black', linestyle='-')
+    grafControle.set_title("Geração x Previsão")
+    grafControle.grid(color="grey", linestyle="-", linewidth=0.001)
+    grafControle.legend()
+
+    # creating the Tkinter canvas 
+    # containing the Matplotlib figure 
+    canvas = FigureCanvasTkAgg(fig, master = tabview.tab("Previsão x Geração"))   
+    canvas.draw() 
+  
+    # placing the canvas on the Tkinter window 
+    canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
 
 
 def dadosDinamicos(dadosMR):
@@ -102,7 +132,7 @@ def dadosDinamicos(dadosMR):
         somBateria += bateria[i]
         somRede += rede[i]
     somaMR = f"Soma Carga: {somCarga}\nSoma Geração Solar: {somgerSolar}\nSoma Bateria: {somBateria}\nSoma Rede: {somRede}"
-    label = customtkinter.CTkLabel(master=frame_dados,
+    label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
                                 text=f"{somaMR}",
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
@@ -120,7 +150,7 @@ def mediaDados(dadosMR):
         medBateria += bateria[i]/medBateria
         medRede += rede[i]/medRede
     somaMR = f"Média Carga: {medCarga}\nMédia Geração Solar: {medgerSolar}\nMédia Bateria: {medBateria}\nMédia Rede: {medRede}"
-    label = customtkinter.CTkLabel(master=frame_dados,
+    label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
                                 text=f"{somaMR}",
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
@@ -143,8 +173,8 @@ fonte_escrita = 'Roboto', 12, 'bold'
 app = customtkinter.CTk()  # create CTk window like you do with the Tk window
 # app.attributes("-fullscreen", True)
 app.geometry("1250x860")
-app.iconbitmap('images/Dístico.png')
 app.title("TCC II")
+
 
 app.grid_columnconfigure((0, 1), weight=1)
 app.grid_columnconfigure((2), weight=10)
@@ -165,7 +195,7 @@ frame_dados.grid_rowconfigure(0, weight=1)
 frame_logo = customtkinter.CTkFrame(app)
 frame_logo.grid(row=3, column=0, padx=(20, 20), pady=(20, 10), sticky="news")
 
-        # create tabview
+# Tab View do Gráfico
 tabview = customtkinter.CTkTabview(frame_graf, width=250)
 tabview.grid(row=0, column=0, padx=(20, 20), pady=(0, 20), sticky="nsew")
 tabview.add("Gráfico da Micro Rede")
@@ -174,12 +204,29 @@ tabview.add("Carga VE x Geração")
 tabview.tab("Gráfico da Micro Rede").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
 tabview.tab("Gráfico da Micro Rede").grid_rowconfigure(0, weight=1)
 tabview.tab("Previsão x Geração").grid_columnconfigure(0, weight=1)
+tabview.tab("Previsão x Geração").grid_rowconfigure(0, weight=1)
 tabview.tab("Carga VE x Geração").grid_columnconfigure(0, weight=1)
 
+# Tab View das informações
+tabviewinfo = customtkinter.CTkTabview(frame_dados, width=250)
+tabviewinfo.grid(row=0, column=0, columnspan=2, padx=(20, 20), pady=(0, 20), sticky="nsew")
+tabviewinfo.add("Total - Média")
+tabviewinfo.add("Máximos - Minímos")
+tabviewinfo.add("Monetário")
+tabviewinfo.tab("Total - Média").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
+tabviewinfo.tab("Total - Média").grid_rowconfigure(0, weight=1)
+tabviewinfo.tab("Máximos - Minímos").grid_columnconfigure(0, weight=1)
+tabviewinfo.tab("Máximos - Minímos").grid_rowconfigure(0, weight=1)
+tabviewinfo.tab("Monetário").grid_columnconfigure(0, weight=1)
+
 # Logo UFSM
-logo_ufsm = customtkinter.CTkImage(light_image=Image.open('images/Dístico.png'), dark_image=Image.open('images/Dístico.png'), size=(200, 200))
-ufsm_label = customtkinter.CTkLabel(app, text='', image=logo_ufsm, bg_color='#e5e5e5')
-ufsm_label.grid(row=3, column=0, pady=10)
+try:
+    logo_ufsm = customtkinter.CTkImage(light_image=Image.open('images/Dístico.png'), dark_image=Image.open('images/Dístico.png'), size=(200, 200))
+    ufsm_label = customtkinter.CTkLabel(app, text='', image=logo_ufsm, bg_color='#e5e5e5')
+    ufsm_label.grid(row=3, column=0, pady=10)
+except:
+    print('Não carregou')
+
 # Botão
 button2 = customtkinter.CTkButton(master=app, 
                                   text="Selecionar CSV", 
@@ -205,5 +252,11 @@ button2 = customtkinter.CTkButton(master=app,
                                   font=fonte_escrita,
                                   command=grafMicro)
 button2.grid(row=2, column=0)
+
+try:
+    app.iconbitmap('images/ufsm.ico')
+except:
+    print('ícone não carregado')
+
 
 app.mainloop()
