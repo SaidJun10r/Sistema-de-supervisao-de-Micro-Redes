@@ -78,7 +78,8 @@ def grafMicro():
     dadosMR = calBatRede(leitorcsv)
     dadosDinamicos(dadosMR)
     mediaDados(dadosMR)
-
+    maxminDados(dadosMR)
+    dadosMon(dadosMR)
 
     # creating the Tkinter canvas 
     # containing the Matplotlib figure 
@@ -87,6 +88,7 @@ def grafMicro():
 
     #PUXANDO GERXPREV
     grafGerPrev()
+    grafRedCarg()
   
     # placing the canvas on the Tkinter window 
     canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
@@ -121,6 +123,35 @@ def grafGerPrev():
     # placing the canvas on the Tkinter window 
     canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
 
+def grafRedCarg():
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede(leitorcsv)
+
+    # the figure that will contain the plot 
+    fig = Figure(figsize = (2, 2), 
+                 dpi = 100) 
+    
+    grafControle = fig.add_subplot(111)
+    
+    grafControle.plot([i for i in range(len(horas))], carga, color = 'violet')
+    grafControle.plot([i + 0.2 for i in range(len(horas))], rede, color = 'limegreen')
+
+    grafControle.bar([i for i in range(len(horas))], carga, label='Previsão', color = 'violet', width=0.2)
+    grafControle.bar([i + 0.2 for i in range(len(horas))], rede, label='Geração', color='limegreen', width=0.2)
+
+    grafControle.set_xlabel('Horas')
+    grafControle.set_ylabel("Energia")
+    grafControle.axhline(0, color='black', linestyle='-')
+    grafControle.set_title("Geração x Previsão")
+    grafControle.grid(color="grey", linestyle="-", linewidth=0.001)
+    grafControle.legend()
+
+    # creating the Tkinter canvas 
+    # containing the Matplotlib figure 
+    canvas = FigureCanvasTkAgg(fig, master = tabview.tab("Rede x Carga"))   
+    canvas.draw() 
+  
+    # placing the canvas on the Tkinter window 
+    canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
 
 def dadosDinamicos(dadosMR):
     # Potência Máxima
@@ -131,9 +162,9 @@ def dadosDinamicos(dadosMR):
         somgerSolar += gerSolar[i]
         somBateria += bateria[i]
         somRede += rede[i]
-    somaMR = f"Soma Carga: {somCarga}\nSoma Geração Solar: {somgerSolar}\nSoma Bateria: {somBateria}\nSoma Rede: {somRede}"
+    somaMR = f"Soma Carga: {somCarga:.2f}\nSoma Geração Solar: {somgerSolar:.2f}\nSoma Bateria: {somBateria:.2f}\nSoma Rede: {somRede:.2f}"
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
-                                text=f"{somaMR}",
+                                text=f'{somaMR}',
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
                                 height=25,
@@ -149,7 +180,7 @@ def mediaDados(dadosMR):
         medgerSolar += gerSolar[i]/medgerSolar
         medBateria += bateria[i]/medBateria
         medRede += rede[i]/medRede
-    somaMR = f"Média Carga: {medCarga}\nMédia Geração Solar: {medgerSolar}\nMédia Bateria: {medBateria}\nMédia Rede: {medRede}"
+    somaMR = f"Média Carga: {medCarga:.2f}\nMédia Geração Solar: {medgerSolar:.2f}\nMédia Bateria: {medBateria:.2f}\nMédia Rede: {medRede:.2f}"
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
                                 text=f"{somaMR}",
                                 font= ('Roboto', 20, 'bold'),
@@ -158,7 +189,63 @@ def mediaDados(dadosMR):
                                 corner_radius=8)
     label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
 
+def maxminDados(dadosMR):
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = dadosMR
 
+    # Máximo dos dados
+    maxCarga = max(carga)
+    maxgerSolar = max(gerSolar)
+    maxBateria = max(bateria)
+    maxRede = max(rede)
+    maxMR = f"Maxima Carga: {maxCarga:.2f}\nMaxima Geração Solar: {maxgerSolar:.2f}\nMaxima Bateria: {maxBateria:.2f}\nMaxima Rede: {maxRede:.2f}"
+    label = customtkinter.CTkLabel(master = tabviewinfo.tab("Máximos - Minímos"),
+                                text=f"{maxMR}",
+                                font= ('Roboto', 20, 'bold'),
+                                width=200,
+                                height=25,
+                                corner_radius=8)
+    label.grid(row=0, column=0, padx=20, pady=10, sticky="news")
+
+    # Minimo dos dados
+    minCarga = min(carga)
+    mingerSolar = min(gerSolar)
+    minBateria = min(bateria)
+    minRede = min(rede)
+    minMR = f"Maxima Carga: {minCarga:.2f}\nMaxima Geração Solar: {mingerSolar:.2f}\nMaxima Bateria: {minBateria:.2f}\nMaxima Rede: {minRede:.2f}"
+    label = customtkinter.CTkLabel(master = tabviewinfo.tab("Máximos - Minímos"),
+                                text=f"{minMR}",
+                                font= ('Roboto', 20, 'bold'),
+                                width=200,
+                                height=25,
+                                corner_radius=8)
+    label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
+
+def dadosMon(dadosMR):
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = dadosMR
+
+    # Placeholder um
+    label = customtkinter.CTkLabel(master = tabviewinfo.tab("Monetário"),
+                                text="Placeholder",
+                                font= ('Roboto', 20, 'bold'),
+                                width=200,
+                                height=25,
+                                corner_radius=8)
+    label.grid(row=0, column=0, padx=20, pady=10, sticky="news")
+
+    # Placeholder dois
+    label = customtkinter.CTkLabel(master = tabviewinfo.tab("Monetário"),
+                                text="Placeholder2",
+                                font= ('Roboto', 20, 'bold'),
+                                width=200,
+                                height=25,
+                                corner_radius=8)
+    label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
+
+def saidaControle():
+    pass
+
+def gerPDF():
+    pass
 
 # Dados Estaticos
 somaMR = 0
@@ -200,12 +287,12 @@ tabview = customtkinter.CTkTabview(frame_graf, width=250)
 tabview.grid(row=0, column=0, padx=(20, 20), pady=(0, 20), sticky="nsew")
 tabview.add("Gráfico da Micro Rede")
 tabview.add("Previsão x Geração")
-tabview.add("Carga VE x Geração")
+tabview.add("Rede x Carga")
 tabview.tab("Gráfico da Micro Rede").grid_columnconfigure(0, weight=1)  # configure grid of individual tabs
 tabview.tab("Gráfico da Micro Rede").grid_rowconfigure(0, weight=1)
 tabview.tab("Previsão x Geração").grid_columnconfigure(0, weight=1)
 tabview.tab("Previsão x Geração").grid_rowconfigure(0, weight=1)
-tabview.tab("Carga VE x Geração").grid_columnconfigure(0, weight=1)
+tabview.tab("Rede x Carga").grid_columnconfigure(0, weight=1)
 
 # Tab View das informações
 tabviewinfo = customtkinter.CTkTabview(frame_dados, width=250)
@@ -228,14 +315,14 @@ except:
     print('Não carregou')
 
 # Botão
-button2 = customtkinter.CTkButton(master=app, 
+button2 = customtkinter.CTkButton(master=frame_botoes, 
                                   text="Selecionar CSV", 
                                   font=fonte_escrita,
                                   command= leitorcsv)
-button2.grid(row=0, column=0)
+button2.grid(row=0, column=0, padx=(60, 20), pady=20, sticky="nsew")
 
-
-optionmenu_1 = customtkinter.CTkOptionMenu(app, 
+# Tipo de controle aplicado na microrede
+optionmenu_1 = customtkinter.CTkOptionMenu(master=frame_botoes, 
                                            dynamic_resizing=True, 
                                            font=fonte_escrita,
                                            values=["Método de controle 1", 
@@ -243,15 +330,28 @@ optionmenu_1 = customtkinter.CTkOptionMenu(app,
                                                    "Método de controle 3",
                                                    "Método de controle 4",
                                                    "Método de controle 5"])
-optionmenu_1.grid(row=1, column=0)
+optionmenu_1.grid(row=1, column=0, padx=(60, 20), pady=20, sticky="nsew")
 
-
-
-button2 = customtkinter.CTkButton(master=app, 
+# Botão para plotar o gráfico
+button2 = customtkinter.CTkButton(master=frame_botoes, 
                                   text="Plotar Gráfico", 
                                   font=fonte_escrita,
                                   command=grafMicro)
-button2.grid(row=2, column=0)
+button2.grid(row=2, column=0, padx=(60, 20), pady=20, sticky="nsew")
+
+# Local de saída
+button3 = customtkinter.CTkButton(master=frame_botoes, 
+                                  text="Saída do controle", 
+                                  font=fonte_escrita,
+                                  command=saidaControle)
+button3.grid(row=3, column=0, padx=(60, 20), pady=20, sticky="nsew")
+
+# Gerar PDF
+button4 = customtkinter.CTkButton(master=frame_botoes, 
+                                  text="Gerar relatório", 
+                                  font=fonte_escrita,
+                                  command=gerPDF)
+button4.grid(row=4, column=0, padx=(60, 20), pady=20, sticky="nsew")
 
 try:
     app.iconbitmap('images/ufsm.ico')
