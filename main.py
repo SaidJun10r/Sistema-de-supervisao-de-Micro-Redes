@@ -10,18 +10,30 @@ from PIL import Image
 
 
 def leitorcsv():
+    # Janela de busca de arquivos pelo Usúario
     file_path = filedialog.askopenfilename()
-    bd = pd.read_csv(file_path) # Dados da rede
+
+    # Abrindo o arquivo em modo de escrita ('w' para write)
+    with open("in.txt", 'w') as caminho:
+        # Escrevendo cada linha dos dados no arquivo
+        caminho.write(file_path)  # Adiciona uma quebra de linha ao final de cada linha
+
+
+def calBatRede():
+    # Abrindo o arquivo em modo de leitura ('r' para read)
+    with open("in.txt", 'r') as caminho:
+        # Lendo todas as linhas do arquivo e armazenando em uma lista
+        file_path = caminho.readlines()
+    
+    # Leitura do banco de dados
+    bd = pd.read_csv(file_path[0]) # Dados da rede
     horas = bd['Horas']
     carga = bd['Carga']
-    gerSolar = bd['GerSolar']
+    gerSolar =  bd['GerSolar']
     cargaVE = bd['CargaVE']
     previsao = bd['Previsao']
 
-    return horas, carga, gerSolar, cargaVE, previsao
-
-def calBatRede(leitorcsv):
-    horas, carga, gerSolar, cargaVE, previsao = leitorcsv()
+    print(horas)
 
     numMetodo = optionmenu_1.get()
 
@@ -41,7 +53,7 @@ def calBatRede(leitorcsv):
 
 def grafMicro(): 
 
-    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede(leitorcsv)
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
 
     # the figure that will contain the plot 
     fig = Figure(figsize = (2, 2), 
@@ -75,11 +87,13 @@ def grafMicro():
     grafControle.legend()
 
     # Dados dinamicos mostrados
-    dadosMR = calBatRede(leitorcsv)
-    dadosDinamicos(dadosMR)
-    mediaDados(dadosMR)
-    maxminDados(dadosMR)
-    dadosMon(dadosMR)
+    dadosMR = calBatRede()
+    somaMR = dadosDinamicos(dadosMR)
+    mediaMR = mediaDados(dadosMR)
+    maxMR, minMR = maxminDados(dadosMR)
+    dadosMonMR = dadosMon(dadosMR)
+
+
 
     # creating the Tkinter canvas 
     # containing the Matplotlib figure 
@@ -94,7 +108,7 @@ def grafMicro():
     canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
 
 def grafGerPrev():
-    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede(leitorcsv)
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
 
     # the figure that will contain the plot 
     fig = Figure(figsize = (2, 2), 
@@ -124,7 +138,7 @@ def grafGerPrev():
     canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
 
 def grafRedCarg():
-    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede(leitorcsv)
+    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
 
     # the figure that will contain the plot 
     fig = Figure(figsize = (2, 2), 
@@ -163,6 +177,7 @@ def dadosDinamicos(dadosMR):
         somBateria += bateria[i]
         somRede += rede[i]
     somaMR = f"Soma Carga: {somCarga:.2f}\nSoma Geração Solar: {somgerSolar:.2f}\nSoma Bateria: {somBateria:.2f}\nSoma Rede: {somRede:.2f}"
+    
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
                                 text=f'{somaMR}',
                                 font= ('Roboto', 20, 'bold'),
@@ -170,6 +185,8 @@ def dadosDinamicos(dadosMR):
                                 height=25,
                                 corner_radius=8)
     label.grid(row=0, column=0, padx=20, pady=10, sticky="news")
+
+    return somaMR
 
 def mediaDados(dadosMR):
     # Potência Máxima
@@ -180,14 +197,17 @@ def mediaDados(dadosMR):
         medgerSolar += gerSolar[i]/medgerSolar
         medBateria += bateria[i]/medBateria
         medRede += rede[i]/medRede
-    somaMR = f"Média Carga: {medCarga:.2f}\nMédia Geração Solar: {medgerSolar:.2f}\nMédia Bateria: {medBateria:.2f}\nMédia Rede: {medRede:.2f}"
+    mediaMR = f"Média Carga: {medCarga:.2f}\nMédia Geração Solar: {medgerSolar:.2f}\nMédia Bateria: {medBateria:.2f}\nMédia Rede: {medRede:.2f}"
+    
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
-                                text=f"{somaMR}",
+                                text=f"{mediaMR}",
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
                                 height=25,
                                 corner_radius=8)
     label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
+
+    return mediaMR
 
 def maxminDados(dadosMR):
     horas, carga, gerSolar, cargaVE, previsao, bateria, rede = dadosMR
@@ -197,6 +217,7 @@ def maxminDados(dadosMR):
     maxgerSolar = max(gerSolar)
     maxBateria = max(bateria)
     maxRede = max(rede)
+    
     maxMR = f"Maxima Carga: {maxCarga:.2f}\nMaxima Geração Solar: {maxgerSolar:.2f}\nMaxima Bateria: {maxBateria:.2f}\nMaxima Rede: {maxRede:.2f}"
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Máximos - Minímos"),
                                 text=f"{maxMR}",
@@ -212,6 +233,7 @@ def maxminDados(dadosMR):
     minBateria = min(bateria)
     minRede = min(rede)
     minMR = f"Maxima Carga: {minCarga:.2f}\nMaxima Geração Solar: {mingerSolar:.2f}\nMaxima Bateria: {minBateria:.2f}\nMaxima Rede: {minRede:.2f}"
+    
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Máximos - Minímos"),
                                 text=f"{minMR}",
                                 font= ('Roboto', 20, 'bold'),
@@ -219,6 +241,8 @@ def maxminDados(dadosMR):
                                 height=25,
                                 corner_radius=8)
     label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
+
+    return maxMR, minMR
 
 def dadosMon(dadosMR):
     horas, carga, gerSolar, cargaVE, previsao, bateria, rede = dadosMR
@@ -241,8 +265,18 @@ def dadosMon(dadosMR):
                                 corner_radius=8)
     label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
 
+    placeholder1, placeholder2 = 'placeholder1', 'placeholder2'
+
+    return placeholder1, placeholder2
+
 def saidaControle():
-    pass
+    # Janela de busca de arquivos pelo Usúario
+    file_path = filedialog.askdirectory()
+
+    # Abrindo o arquivo em modo de escrita ('w' para write)
+    with open("out.txt", 'w') as caminho:
+        # Escrevendo cada linha dos dados no arquivo
+        caminho.write(file_path)  # Adiciona uma quebra de linha ao final de cada linha
 
 def gerPDF():
     pass
