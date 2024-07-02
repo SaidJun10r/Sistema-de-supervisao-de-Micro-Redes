@@ -304,6 +304,19 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
         cnv.drawString(10, eixo, str(i))
         eixo -= 15
 
+    # Desenhando a media PDF
+    cnv.drawString(100, 800, "mediaMR")
+    eixo = 785
+    for i in mediaMR:
+        cnv.drawString(100, eixo, str(i))
+        eixo -= 15
+
+    # Desenhando a max PDF
+    cnv.drawString(10, 720, "maxMR")
+    eixo = 705
+    for i in maxMR:
+        cnv.drawString(10, eixo, str(i))
+        eixo -= 15
 
     cnv.drawString(10, 20, "Controle, Supervisão e Automação de Microredes")
     cnv.drawString(10, 10, "Said Ernandes de Moura Júnior")
