@@ -7,6 +7,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 import pandas as pd
 from PIL import Image
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 
 
 def leitorcsv():
@@ -32,8 +34,6 @@ def calBatRede():
     gerSolar =  bd['GerSolar']
     cargaVE = bd['CargaVE']
     previsao = bd['Previsao']
-
-    print(horas)
 
     numMetodo = optionmenu_1.get()
 
@@ -92,7 +92,7 @@ def grafMicro():
     mediaMR = mediaDados(dadosMR)
     maxMR, minMR = maxminDados(dadosMR)
     dadosMonMR = dadosMon(dadosMR)
-
+    gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR)
 
 
     # creating the Tkinter canvas 
@@ -176,10 +176,13 @@ def dadosDinamicos(dadosMR):
         somgerSolar += gerSolar[i]
         somBateria += bateria[i]
         somRede += rede[i]
-    somaMR = f"Soma Carga: {somCarga:.2f}\nSoma Geração Solar: {somgerSolar:.2f}\nSoma Bateria: {somBateria:.2f}\nSoma Rede: {somRede:.2f}"
+    # Listas das somas de MR
+    somaMR = [somCarga, somgerSolar, somBateria, somRede]
+    
+    ssomaMR = f"Soma Carga: {somCarga:.2f}\nSoma Geração Solar: {somgerSolar:.2f}\nSoma Bateria: {somBateria:.2f}\nSoma Rede: {somRede:.2f}"
     
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
-                                text=f'{somaMR}',
+                                text=f'{ssomaMR}',
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
                                 height=25,
@@ -197,10 +200,13 @@ def mediaDados(dadosMR):
         medgerSolar += gerSolar[i]/medgerSolar
         medBateria += bateria[i]/medBateria
         medRede += rede[i]/medRede
-    mediaMR = f"Média Carga: {medCarga:.2f}\nMédia Geração Solar: {medgerSolar:.2f}\nMédia Bateria: {medBateria:.2f}\nMédia Rede: {medRede:.2f}"
+    # Lista com todas as médias
+    mediaMR = [medCarga, medgerSolar, medBateria, medRede]
+    
+    smediaMR = f"Média Carga: {medCarga:.2f}\nMédia Geração Solar: {medgerSolar:.2f}\nMédia Bateria: {medBateria:.2f}\nMédia Rede: {medRede:.2f}"
     
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
-                                text=f"{mediaMR}",
+                                text=f"{smediaMR}",
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
                                 height=25,
@@ -217,10 +223,13 @@ def maxminDados(dadosMR):
     maxgerSolar = max(gerSolar)
     maxBateria = max(bateria)
     maxRede = max(rede)
+    # Lista com máximos da MR
+    maxMR = [maxCarga, maxgerSolar, maxBateria, maxRede]
     
-    maxMR = f"Maxima Carga: {maxCarga:.2f}\nMaxima Geração Solar: {maxgerSolar:.2f}\nMaxima Bateria: {maxBateria:.2f}\nMaxima Rede: {maxRede:.2f}"
+    smaxMR = f"Maxima Carga: {maxCarga:.2f}\nMaxima Geração Solar: {maxgerSolar:.2f}\nMaxima Bateria: {maxBateria:.2f}\nMaxima Rede: {maxRede:.2f}"
+    
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Máximos - Minímos"),
-                                text=f"{maxMR}",
+                                text=f"{smaxMR}",
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
                                 height=25,
@@ -232,10 +241,13 @@ def maxminDados(dadosMR):
     mingerSolar = min(gerSolar)
     minBateria = min(bateria)
     minRede = min(rede)
-    minMR = f"Maxima Carga: {minCarga:.2f}\nMaxima Geração Solar: {mingerSolar:.2f}\nMaxima Bateria: {minBateria:.2f}\nMaxima Rede: {minRede:.2f}"
+    # Lista com minímos das MR
+    minMR = [minCarga, mingerSolar, minBateria, minRede]
+    
+    sminMR = f"Maxima Carga: {minCarga:.2f}\nMaxima Geração Solar: {mingerSolar:.2f}\nMaxima Bateria: {minBateria:.2f}\nMaxima Rede: {minRede:.2f}"
     
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Máximos - Minímos"),
-                                text=f"{minMR}",
+                                text=f"{sminMR}",
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
                                 height=25,
@@ -265,9 +277,12 @@ def dadosMon(dadosMR):
                                 corner_radius=8)
     label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
 
+    # Lista com dados Mon
+    dadosMonMR = ["PlaceHolder1", "placeholder2"]
+
     placeholder1, placeholder2 = 'placeholder1', 'placeholder2'
 
-    return placeholder1, placeholder2
+    return dadosMonMR
 
 def saidaControle():
     # Janela de busca de arquivos pelo Usúario
@@ -278,8 +293,22 @@ def saidaControle():
         # Escrevendo cada linha dos dados no arquivo
         caminho.write(file_path)  # Adiciona uma quebra de linha ao final de cada linha
 
-def gerPDF():
-    pass
+def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
+    # Criando PDF
+    cnv = canvas.Canvas("meu_pdf.pdf", pagesize=A4)
+
+    # Desenhando a soma PDF
+    cnv.drawString(10, 800, "somaMR")
+    eixo = 785
+    for i in somaMR:
+        cnv.drawString(10, eixo, str(i))
+        eixo -= 15
+
+
+    cnv.drawString(10, 20, "Controle, Supervisão e Automação de Microredes")
+    cnv.drawString(10, 10, "Said Ernandes de Moura Júnior")
+
+    cnv.save()
 
 # Dados Estaticos
 somaMR = 0
