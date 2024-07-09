@@ -47,7 +47,7 @@ def calBatRede():
         case "Método de controle 4":
             bateria, rede = modelos.edc4(horas, carga, gerSolar, cargaVE, previsao, 4000)
         case "Método de controle 5":     
-            bateria, rede = modelos.edc5(horas, carga, gerSolar, cargaVE, previsao, 4000)
+            bateria, rede = modelos.edc5(horas, carga, gerSolar, cargaVE, 4000)
 
     return horas, carga, gerSolar, cargaVE, previsao, bateria, rede
 
@@ -317,6 +317,20 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
     for i in maxMR:
         cnv.drawString(10, eixo, str(i))
         eixo -= 15
+
+    numMetodo = optionmenu_1.get()
+
+    match numMetodo:
+        case "Método de controle 1":
+            cnv.drawImage("fluxogramas/flu1.png", 30, 30, width=200, height=200)
+        case "Método de controle 2":
+            cnv.drawImage("fluxogramas/flu2.png", 30, 30, width=200, height=200)
+        case "Método de controle 3":
+            cnv.drawImage("fluxogramas/flu3.png", 30, 30, width=200, height=200)
+        case "Método de controle 4":
+            cnv.drawImage("fluxogramas/flu4.png", 30, 30, width=200, height=200)
+        case "Método de controle 5":     
+            cnv.drawImage("fluxogramas/flu5.png", 30, 30, width=200, height=200)
 
     cnv.drawString(10, 20, "Controle, Supervisão e Automação de Microredes")
     cnv.drawString(10, 10, "Said Ernandes de Moura Júnior")

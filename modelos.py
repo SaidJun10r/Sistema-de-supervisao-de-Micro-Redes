@@ -1,7 +1,8 @@
 def edc1(horas, carga, gerSolar, maxBateria=4000):
     bateria = [i - i for i in horas]
     rede = [i - i for i in horas]
-    
+    comControle = []
+
     for i in range(len(horas)):
         eRest = carga[i] - gerSolar[i] # Energia que sobra na carga
 
@@ -9,19 +10,33 @@ def edc1(horas, carga, gerSolar, maxBateria=4000):
             if eRest > 0:
                 if bateria[i-1] == 0:
                     rede[i] = -eRest
+                    comControle .append(str(i) + " | carga - rede |")
                 else:
                     bateria[i] = bateria[i-1] - eRest
+                    comControle .append(str(i) + " | carga - bateria |")
             else:
                 rede[i] = -eRest
                 bateria[i] = bateria[i-1]    
+                comControle .append(str(i) + " | rede - gerSolar |")
         else:
             bateria[i] = bateria[i-1] + gerSolar[i]
             rede[i] = -carga[i]
+            comControle .append(str(i) + " | carga - rede | bateria - gerSolar |")
 
         if bateria [i] > maxBateria:
             bateria[i] = maxBateria
         elif bateria[i] < 0:
             bateria[i] = 0
+
+    # Criando arquivo de controle da microrede
+    with open("out.txt", 'r') as caminho:
+        # Lendo todas as linhas do arquivo e armazenando em uma lista
+        local_arquivo = caminho.readlines()
+    # Abrindo o arquivo em modo de escrita ('w' para write)
+    with open(f"{str(local_arquivo[0])}/controleMR.txt", 'w') as controle:
+        # Escrevendo cada linha dos dados no arquivo
+        for j in range(len(comControle)):
+            controle.write(f"[{comControle[j]}]\n")  # Adiciona uma quebra de linha ao final de cada linha
 
     return bateria, rede
 
