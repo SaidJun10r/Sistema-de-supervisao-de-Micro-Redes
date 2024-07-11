@@ -1,3 +1,14 @@
+def gravacaoSaida(comControle):
+    # Criando arquivo de controle da microrede
+    with open("out.txt", 'r') as caminho:
+        # Lendo todas as linhas do arquivo e armazenando em uma lista
+        local_arquivo = caminho.readlines()
+    # Abrindo o arquivo em modo de escrita ('w' para write)
+    with open(f"{str(local_arquivo[0])}/controleMR.txt", 'w') as controle:
+        # Escrevendo cada linha dos dados no arquivo
+        for j in range(len(comControle)):
+            controle.write(f"[{comControle[j]}]\n")  # Adiciona uma quebra de linha ao final de cada linha
+
 def edc1(horas, carga, gerSolar, maxBateria=4000):
     bateria = [i - i for i in horas]
     rede = [i - i for i in horas]
@@ -28,21 +39,14 @@ def edc1(horas, carga, gerSolar, maxBateria=4000):
         elif bateria[i] < 0:
             bateria[i] = 0
 
-    # Criando arquivo de controle da microrede
-    with open("out.txt", 'r') as caminho:
-        # Lendo todas as linhas do arquivo e armazenando em uma lista
-        local_arquivo = caminho.readlines()
-    # Abrindo o arquivo em modo de escrita ('w' para write)
-    with open(f"{str(local_arquivo[0])}/controleMR.txt", 'w') as controle:
-        # Escrevendo cada linha dos dados no arquivo
-        for j in range(len(comControle)):
-            controle.write(f"[{comControle[j]}]\n")  # Adiciona uma quebra de linha ao final de cada linha
+    gravacaoSaida(comControle)
 
     return bateria, rede
 
 def edc2(horas, carga, gerSolar, maxBateria):
     bateria = [i - i for i in horas]
     rede = [i - i for i in horas]
+    comControle = []
 
     for i in range(len(horas)):
         eRest = carga[i] - gerSolar[i] # Energia que sobrará caso vá para carga
@@ -50,6 +54,7 @@ def edc2(horas, carga, gerSolar, maxBateria):
             if bateria[i-1] == maxBateria: # Verifica se a bateria está cheia
                 rede[i] = -eRest # Vende energia para a rede
                 bateria[i] = bateria[i-1]
+                comControle .append(str(i) + " | rede - gerSolar |")
             else:
                 bateria[i] = bateria[i-1] + -(eRest)  # Geração alimenta a bateria
         else: # carga não foi atendida
