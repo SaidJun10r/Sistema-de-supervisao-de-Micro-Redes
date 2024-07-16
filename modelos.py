@@ -1,6 +1,6 @@
 def gravacaoSaida(comControle):
     # Criando arquivo de controle da microrede
-    with open("out.txt", 'r') as caminho:
+    with open("inputs/out.txt", 'r') as caminho:
         # Lendo todas as linhas do arquivo e armazenando em uma lista
         local_arquivo = caminho.readlines()
     # Abrindo o arquivo em modo de escrita ('w' para write)
@@ -43,7 +43,7 @@ def edc1(horas, carga, gerSolar, maxBateria=4000):
 
     return bateria, rede
 
-def edc2(horas, carga, gerSolar, maxBateria):
+def edc2(horas, carga, gerSolar, maxBateria=4000):
     bateria = [i - i for i in horas]
     rede = [i - i for i in horas]
     comControle = []
@@ -77,10 +77,9 @@ def edc2(horas, carga, gerSolar, maxBateria):
 
     return bateria, rede
 
-def edc3(horas, carga, gerSolar, cargaVE, previsao, maxBateria):
+def edc3(horas, carga, gerSolar, cargaVE, previsao, maxBateria=4000):
     rede = [i - i for i in horas]
     bateria = [i - i for i in horas]
-    maxBateria = 4000
     acumulado = 1
     horaDescarga = 0
     divisao = 1
@@ -130,10 +129,9 @@ def edc3(horas, carga, gerSolar, cargaVE, previsao, maxBateria):
 
     return bateria, rede
 
-def edc4(horas, carga, gerSolar, cargaVE, previsao, maxBateria):
+def edc4(horas, carga, gerSolar, cargaVE, previsao, maxBateria=4000):
     rede = [i - i for i in horas]
     bateria = [i - i for i in horas]
-    maxBateria = 4000
     acumulado = 1
     horaDescarg = 0
     comControle = []
@@ -180,10 +178,9 @@ def edc4(horas, carga, gerSolar, cargaVE, previsao, maxBateria):
 
     return bateria, rede
 
-def edc5(horas, carga, gerSolar, cargaVE, maxBateria):
+def edc5(horas, carga, gerSolar, cargaVE, maxBateria=4000):
     rede = [i - i for i in horas]
     bateria = [i - i for i in horas]
-    maxBateria = 4000
     comControle = []
 
     # Controle da Micro rede

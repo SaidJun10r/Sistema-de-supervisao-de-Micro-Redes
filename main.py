@@ -1,8 +1,7 @@
 import modelos
 import customtkinter
 from customtkinter import filedialog
-from tkinter import * 
-from matplotlib import pyplot as plt
+from tkinter import *
 from matplotlib.figure import Figure 
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 import pandas as pd
@@ -10,20 +9,18 @@ from PIL import Image
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 
-
 def leitorcsv():
     # Janela de busca de arquivos pelo Usúario
     file_path = filedialog.askopenfilename()
 
     # Abrindo o arquivo em modo de escrita ('w' para write)
-    with open("in.txt", 'w') as caminho:
+    with open("inputs/in.txt", 'w') as caminho:
         # Escrevendo cada linha dos dados no arquivo
         caminho.write(file_path)  # Adiciona uma quebra de linha ao final de cada linha
 
-
 def calBatRede():
     # Abrindo o arquivo em modo de leitura ('r' para read)
-    with open("in.txt", 'r') as caminho:
+    with open("inputs/in.txt", 'r') as caminho:
         # Lendo todas as linhas do arquivo e armazenando em uma lista
         file_path = caminho.readlines()
     
@@ -37,17 +34,20 @@ def calBatRede():
 
     numMetodo = optionmenu_1.get()
 
+    # MÁXIMO DA BATERIA
+    maxBateria = 4000
+
     match numMetodo:
         case "Método de controle 1":
-            bateria, rede = modelos.edc1(horas, carga, gerSolar, 4000)
+            bateria, rede = modelos.edc1(horas, carga, gerSolar, maxBateria)
         case "Método de controle 2":
-            bateria, rede = modelos.edc2(horas, carga, gerSolar, 4000)
+            bateria, rede = modelos.edc2(horas, carga, gerSolar, maxBateria)
         case "Método de controle 3":
-            bateria, rede = modelos.edc3(horas, carga, gerSolar, cargaVE, previsao, 4000) 
+            bateria, rede = modelos.edc3(horas, carga, gerSolar, cargaVE, previsao, maxBateria) 
         case "Método de controle 4":
-            bateria, rede = modelos.edc4(horas, carga, gerSolar, cargaVE, previsao, 4000)
+            bateria, rede = modelos.edc4(horas, carga, gerSolar, cargaVE, previsao, maxBateria)
         case "Método de controle 5":     
-            bateria, rede = modelos.edc5(horas, carga, gerSolar, cargaVE, 4000)
+            bateria, rede = modelos.edc5(horas, carga, gerSolar, cargaVE, maxBateria)
 
     return horas, carga, gerSolar, cargaVE, previsao, bateria, rede
 
@@ -56,7 +56,7 @@ def grafMicro():
     horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
 
     # the figure that will contain the plot 
-    fig = Figure(figsize = (2, 2), 
+    fig = Figure(figsize = (8, 4), 
                  dpi = 100) 
     
     grafControle = fig.add_subplot(111)
@@ -86,6 +86,9 @@ def grafMicro():
     grafControle.grid(color="grey", linestyle="-", linewidth=0.001)
     grafControle.legend()
 
+    # Salvando Gráfico em PNG
+    fig.savefig('graficos/grafMR.png')
+
     # Dados dinamicos mostrados
     dadosMR = calBatRede()
     somaMR = dadosDinamicos(dadosMR)
@@ -111,7 +114,7 @@ def grafGerPrev():
     horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
 
     # the figure that will contain the plot 
-    fig = Figure(figsize = (2, 2), 
+    fig = Figure(figsize = (8, 4), 
                  dpi = 100) 
     
     grafControle = fig.add_subplot(111)
@@ -129,6 +132,9 @@ def grafGerPrev():
     grafControle.grid(color="grey", linestyle="-", linewidth=0.001)
     grafControle.legend()
 
+    # Salvando Gráfico em PNG
+    fig.savefig('graficos/grafGerPrev.png')
+
     # creating the Tkinter canvas 
     # containing the Matplotlib figure 
     canvas = FigureCanvasTkAgg(fig, master = tabview.tab("Previsão x Geração"))   
@@ -141,7 +147,7 @@ def grafRedCarg():
     horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
 
     # the figure that will contain the plot 
-    fig = Figure(figsize = (2, 2), 
+    fig = Figure(figsize = (8, 4), 
                  dpi = 100) 
     
     grafControle = fig.add_subplot(111)
@@ -158,6 +164,9 @@ def grafRedCarg():
     grafControle.set_title("Geração x Previsão")
     grafControle.grid(color="grey", linestyle="-", linewidth=0.001)
     grafControle.legend()
+
+    # Salvando Gráfico em PNG
+    fig.savefig('graficos/grafRedCarg.png')
 
     # creating the Tkinter canvas 
     # containing the Matplotlib figure 
@@ -289,13 +298,13 @@ def saidaControle():
     file_path = filedialog.askdirectory()
 
     # Abrindo o arquivo em modo de escrita ('w' para write)
-    with open("out.txt", 'w') as caminho:
+    with open("inputs/out.txt", 'w') as caminho:
         # Escrevendo cada linha dos dados no arquivo
         caminho.write(file_path)  # Adiciona uma quebra de linha ao final de cada linha
 
 def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
     # Criando PDF
-    cnv = canvas.Canvas("meu_pdf.pdf", pagesize=A4)
+    cnv = canvas.Canvas("outputs/relatorio_MR.pdf", pagesize=A4)
 
     # Desenhando a soma PDF
     cnv.drawString(10, 800, "somaMR")
@@ -316,6 +325,13 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
     eixo = 705
     for i in maxMR:
         cnv.drawString(10, eixo, str(i))
+        eixo -= 15
+
+    # Desenhando a min PDF
+    cnv.drawString(100, 720, "minMR")
+    eixo = 705
+    for i in mediaMR:
+        cnv.drawString(100, eixo, str(i))
         eixo -= 15
 
     numMetodo = optionmenu_1.get()
