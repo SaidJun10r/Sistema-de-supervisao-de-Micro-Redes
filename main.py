@@ -34,8 +34,12 @@ def calBatRede():
 
     numMetodo = optionmenu_1.get()
 
+#################################################
+
     # MÁXIMO DA BATERIA
     maxBateria = 4000
+
+#################################################
 
     match numMetodo:
         case "Método de controle 1":
@@ -79,7 +83,7 @@ def grafMicro():
     if optionmenu_1.get() == "Método de controle 3" or optionmenu_1.get() == "Método de controle 4" or optionmenu_1.get() == "Método de controle 5":
         grafControle.bar([i + 0.8 for i in range(len(horas))], cargaVE, label='Carga do VE',color = 'lightblue', width=0.2)
   
-    grafControle.set_xlabel('Horas')
+    grafControle.set_xlabel('Pontos')
     grafControle.set_ylabel("Energia")
     grafControle.axhline(0, color='black', linestyle='-')
     grafControle.set_title("Gráfico da Micro Rede")
@@ -125,10 +129,10 @@ def grafGerPrev():
     grafControle.bar([i for i in range(len(horas))], previsao, label='Previsão', color = 'violet', width=0.2)
     grafControle.bar([i + 0.2 for i in range(len(horas))], gerSolar, label='Geração', color='limegreen', width=0.2)
 
-    grafControle.set_xlabel('Horas')
+    grafControle.set_xlabel('Pontos')
     grafControle.set_ylabel("Energia")
     grafControle.axhline(0, color='black', linestyle='-')
-    grafControle.set_title("Geração x Previsão")
+    grafControle.set_title("Gráfico da Geração x Previsão")
     grafControle.grid(color="grey", linestyle="-", linewidth=0.001)
     grafControle.legend()
 
@@ -158,10 +162,10 @@ def grafRedCarg():
     grafControle.bar([i for i in range(len(horas))], carga, label='Previsão', color = 'violet', width=0.2)
     grafControle.bar([i + 0.2 for i in range(len(horas))], rede, label='Geração', color='limegreen', width=0.2)
 
-    grafControle.set_xlabel('Horas')
+    grafControle.set_xlabel('Pontos')
     grafControle.set_ylabel("Energia")
     grafControle.axhline(0, color='black', linestyle='-')
-    grafControle.set_title("Geração x Previsão")
+    grafControle.set_title("Gráfico da Rede x Carga")
     grafControle.grid(color="grey", linestyle="-", linewidth=0.001)
     grafControle.legend()
 
@@ -338,17 +342,32 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
 
     match numMetodo:
         case "Método de controle 1":
-            cnv.drawImage("fluxogramas/flu1.png", 30, 30, width=200, height=200)
+            cnv.drawImage("fluxogramas/flu1.png", 150, 75, width=300, height=300)
         case "Método de controle 2":
-            cnv.drawImage("fluxogramas/flu2.png", 30, 30, width=200, height=200)
+            cnv.drawImage("fluxogramas/flu2.png", 150, 75, width=300, height=300)
         case "Método de controle 3":
-            cnv.drawImage("fluxogramas/flu3.png", 30, 30, width=200, height=200)
+            cnv.drawImage("fluxogramas/flu3.png", 125, 75, width=350, height=300)
         case "Método de controle 4":
-            cnv.drawImage("fluxogramas/flu4.png", 30, 30, width=200, height=200)
+            cnv.drawImage("fluxogramas/flu4.png", 150, 75, width=300, height=300)
         case "Método de controle 5":     
-            cnv.drawImage("fluxogramas/flu5.png", 30, 30, width=200, height=200)
+            cnv.drawImage("fluxogramas/flu5.png", 125, 75, width=350, height=300)
 
-    cnv.drawString(10, 20, "Controle, Supervisão e Automação de Microredes")
+    cnv.drawString(10, 25, "Controle, Supervisão e Automação de Microredes")
+    cnv.drawString(10, 10, "Said Ernandes de Moura Júnior")
+
+    # Cria nova página PDF
+    cnv.showPage()
+
+    # Gráfico MR
+    cnv.drawImage("graficos/grafMR.png", 30, 575, width=550, height=250)
+
+    # Gráfico Geração x Previsão
+    cnv.drawImage("graficos/grafGerPrev.png", 30, 325, width=550, height=250)
+
+    # Gráfico Rede x Carga
+    cnv.drawImage("graficos/grafRedCarg.png", 30, 75, width=550, height=250)
+
+    cnv.drawString(10, 25, "Controle, Supervisão e Automação de Microredes")
     cnv.drawString(10, 10, "Said Ernandes de Moura Júnior")
 
     cnv.save()
