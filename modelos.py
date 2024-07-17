@@ -184,7 +184,7 @@ def edc5(horas, carga, gerSolar, cargaVE, maxBateria=4000):
     comControle = []
 
     # Controle da Micro rede
-    for i in range(96):
+    for i in range(len(horas)):
         eRest = carga[i] - gerSolar[i] # Energia que sobrará caso vá para carga
 
         if bateria[i-1] == maxBateria or gerSolar[i] < carga[i]: # Verifica se a bateria está cheia
