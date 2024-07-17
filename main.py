@@ -8,6 +8,8 @@ import pandas as pd
 from PIL import Image
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
 
 def leitorcsv():
     # Janela de busca de arquivos pelo Usúario
@@ -310,36 +312,51 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
     # Criando PDF
     cnv = canvas.Canvas("outputs/relatorio_MR.pdf", pagesize=A4)
 
+    # Inserindo a fonte no pdf
+    pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
+
+######################################Página 1#######################################  
+    # Fonte do Título
+    cnv.setFont('Arial', 18)
+    
+    # Título do documento
+    cnv.drawString(100, 800, "Relátorio da analíse dos dados da Micro Rede")
+
+    # Inserir imagem do modelo da Micro Rede
+
+    # Mudança de fonte
+    cnv.setFont('Arial', 12)
+
     # Desenhando a soma PDF
-    cnv.drawString(10, 800, "somaMR")
-    eixo = 785
+    cnv.drawString(150, 700, "somaMR")
+    eixo = 685
     for i in somaMR:
-        cnv.drawString(10, eixo, str(i))
+        cnv.drawString(150, eixo, str(i))
         eixo -= 15
 
     # Desenhando a media PDF
-    cnv.drawString(100, 800, "mediaMR")
-    eixo = 785
+    cnv.drawString(300, 700, "mediaMR")
+    eixo = 685
     for i in mediaMR:
-        cnv.drawString(100, eixo, str(i))
+        cnv.drawString(300, eixo, str(i))
         eixo -= 15
 
     # Desenhando a max PDF
-    cnv.drawString(10, 720, "maxMR")
-    eixo = 705
+    cnv.drawString(150, 620, "maxMR")
+    eixo = 605
     for i in maxMR:
-        cnv.drawString(10, eixo, str(i))
+        cnv.drawString(150, eixo, str(i))
         eixo -= 15
 
     # Desenhando a min PDF
-    cnv.drawString(100, 720, "minMR")
-    eixo = 705
+    cnv.drawString(300, 620, "minMR")
+    eixo = 605
     for i in mediaMR:
-        cnv.drawString(100, eixo, str(i))
+        cnv.drawString(300, eixo, str(i))
         eixo -= 15
 
+    # Escolhendo o fluxograma do método de controle escolhido
     numMetodo = optionmenu_1.get()
-
     match numMetodo:
         case "Método de controle 1":
             cnv.drawImage("fluxogramas/flu1.png", 150, 75, width=300, height=300)
@@ -352,21 +369,25 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
         case "Método de controle 5":     
             cnv.drawImage("fluxogramas/flu5.png", 125, 75, width=350, height=300)
 
+    # Rodapé
     cnv.drawString(10, 25, "Controle, Supervisão e Automação de Microredes")
     cnv.drawString(10, 10, "Said Ernandes de Moura Júnior")
+
+######################################Página 2#######################################  
 
     # Cria nova página PDF
     cnv.showPage()
 
     # Gráfico MR
-    cnv.drawImage("graficos/grafMR.png", 30, 575, width=550, height=250)
+    cnv.drawImage("graficos/grafMR.png", 30, 555, width=550, height=250)
 
     # Gráfico Geração x Previsão
-    cnv.drawImage("graficos/grafGerPrev.png", 30, 325, width=550, height=250)
+    cnv.drawImage("graficos/grafGerPrev.png", 30, 305, width=550, height=250)
 
     # Gráfico Rede x Carga
-    cnv.drawImage("graficos/grafRedCarg.png", 30, 75, width=550, height=250)
+    cnv.drawImage("graficos/grafRedCarg.png", 30, 55, width=550, height=250)
 
+    # Roda pé
     cnv.drawString(10, 25, "Controle, Supervisão e Automação de Microredes")
     cnv.drawString(10, 10, "Said Ernandes de Moura Júnior")
 
