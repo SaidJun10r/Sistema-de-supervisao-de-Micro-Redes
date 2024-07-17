@@ -367,7 +367,7 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
         case "Método de controle 4":
             cnv.drawImage("fluxogramas/flu4.png", 150, 75, width=300, height=300)
         case "Método de controle 5":     
-            cnv.drawImage("fluxogramas/flu5.png", 125, 75, width=350, height=300)
+            cnv.drawImage("fluxogramas/flu5.png", 125, 75, width=375, height=300)
 
     # Rodapé
     cnv.drawString(10, 25, "Controle, Supervisão e Automação de Microredes")
