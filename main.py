@@ -76,8 +76,8 @@ def grafMicro():
     if optionmenu_1.get() == "Método de controle 3" or optionmenu_1.get() == "Método de controle 4" or optionmenu_1.get() == "Método de controle 5":
         grafControle.plot([i + 0.8 for i in range(len(horas))], cargaVE, color = 'lightblue')
 
-    grafControle.bar([i for i in range(len(horas))], carga, label='Carga expandida',width=0.2)
-    grafControle.bar([i + 0.2 for i in range(len(horas))], gerSolar, label='Geração expandida', color='limegreen',width=0.2)
+    grafControle.bar([i for i in range(len(horas))], carga, label='Carga',width=0.2)
+    grafControle.bar([i + 0.2 for i in range(len(horas))], gerSolar, label='Geração', color='limegreen',width=0.2)
     grafControle.bar([i + 0.4 for i in range(len(horas))], rede, label='Rede', color='gold',width=0.2)
     grafControle.bar([i + 0.6 for i in range(len(horas))], bateria, label='Bateria', color='red',width=0.2)
 
@@ -100,8 +100,8 @@ def grafMicro():
     somaMR = dadosDinamicos(dadosMR)
     mediaMR = mediaDados(dadosMR)
     maxMR, minMR = maxminDados(dadosMR)
-    dadosMonMR = dadosMon(dadosMR)
-    gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR)
+    preco_final, preco_carga, preco_max, preco_min = dadosMon(dadosMR)
+    gerPDF(somaMR, mediaMR, maxMR, minMR, preco_final, preco_carga, preco_max, preco_min)
 
 
     # creating the Tkinter canvas 
@@ -161,8 +161,8 @@ def grafRedCarg():
     grafControle.plot([i for i in range(len(horas))], carga, color = 'violet')
     grafControle.plot([i + 0.2 for i in range(len(horas))], rede, color = 'limegreen')
 
-    grafControle.bar([i for i in range(len(horas))], carga, label='Previsão', color = 'violet', width=0.2)
-    grafControle.bar([i + 0.2 for i in range(len(horas))], rede, label='Geração', color='limegreen', width=0.2)
+    grafControle.bar([i for i in range(len(horas))], carga, label='Carga', color = 'violet', width=0.2)
+    grafControle.bar([i + 0.2 for i in range(len(horas))], rede, label='Rede', color='limegreen', width=0.2)
 
     grafControle.set_xlabel('Pontos')
     grafControle.set_ylabel("Energia")
@@ -274,30 +274,49 @@ def maxminDados(dadosMR):
 def dadosMon(dadosMR):
     horas, carga, gerSolar, cargaVE, previsao, bateria, rede = dadosMR
 
-    # Placeholder um
+######################## Preço da energia ###################################
+    preco_energia = 0.17
+
+    # Quanto foi pago    
+    preco_final=0
+    for i in range(len(rede)):
+        preco_final += rede[i] * preco_energia
+
+    # Quanto pagaria só comprando da rede
+    preco_carga = 0
+    for i in range(len(carga)):
+        preco_carga += carga[i] * preco_energia
+
+
+    preco = f"\nPreço final: R$ {preco_final:.2f}\n\nPreço com carga exclusivamente\nalimentada pela rede: R$ {preco_carga:.2f}"
+
+    # Quanto foi pago no horario de máxima compra
+    preco_max = max(rede) * preco_energia
+
+    # Quanto foi pago o horário de minima compra
+    preco_min = min(rede) * preco_energia
+
+    precominmax = f"\nPreço no horário de\nmaior consumo: R$ {preco_max:.2f}\n\nPreço do horário de\nmenor consumo: R$ {preco_min:.2f}"
+
+    # Preço da rede inteira
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Monetário"),
-                                text="Placeholder",
+                                text=f"{preco}",
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
                                 height=25,
                                 corner_radius=8)
     label.grid(row=0, column=0, padx=20, pady=10, sticky="news")
 
-    # Placeholder dois
+    # Preço 
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Monetário"),
-                                text="Placeholder2",
+                                text=f"{precominmax}",
                                 font= ('Roboto', 20, 'bold'),
                                 width=200,
                                 height=25,
                                 corner_radius=8)
     label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
 
-    # Lista com dados Mon
-    dadosMonMR = ["PlaceHolder1", "placeholder2"]
-
-    placeholder1, placeholder2 = 'placeholder1', 'placeholder2'
-
-    return dadosMonMR
+    return preco_final, preco_carga, preco_max, preco_min
 
 def saidaControle():
     # Janela de busca de arquivos pelo Usúario
@@ -308,7 +327,7 @@ def saidaControle():
         # Escrevendo cada linha dos dados no arquivo
         caminho.write(file_path)  # Adiciona uma quebra de linha ao final de cada linha
 
-def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
+def gerPDF(somaMR, mediaMR, maxMR, minMR, preco_final, preco_carga, preco_max, preco_min):
     # Criando PDF
     cnv = canvas.Canvas("outputs/relatorio_MR.pdf", pagesize=A4)
 
@@ -327,33 +346,106 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, dadosMonMR):
     # Mudança de fonte
     cnv.setFont('Arial', 12)
 
-    # Desenhando a soma PDF
-    cnv.drawString(150, 700, "somaMR")
-    eixo = 685
-    for i in somaMR:
-        cnv.drawString(150, eixo, str(i))
-        eixo -= 15
+############################### Dados do Usuário ####################################
 
-    # Desenhando a media PDF
-    cnv.drawString(300, 700, "mediaMR")
+    cnv.drawString(30, 770, "Usuário: Said Ernandes de Moura Júnior")
+
+    cnv.drawString(30, 750, "Objetivo da simulação: Minimo uso da rede centralizada")
+
+    cnv.drawString(30, 730, "Máximo da Bateria: 4000")
+
+#####################################################################################
+
+    # Desenho da microrrede
+    cnv.drawImage("images/Microrrede.png", 380, 720, width=170, height=70)
+
+    # Desenhando a soma PDF
+    margem = 30
+    cnv.drawString(margem, 700, "somaMR")
     eixo = 685
-    for i in mediaMR:
-        cnv.drawString(300, eixo, str(i))
+    x = 0
+    for i in somaMR:
+        match x:
+            case 0:
+                cnv.drawString(margem, eixo, f"Carga: {i:.2f}")
+            case 1:
+                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f}")
+            case 2:
+                cnv.drawString(margem, eixo, f"Rede: {i:.2f}")
+            case 3:
+                cnv.drawString(margem, eixo, f"Bateria: {i:.2f}")
         eixo -= 15
+        x += 1
 
     # Desenhando a max PDF
-    cnv.drawString(150, 620, "maxMR")
-    eixo = 605
+    margem = 30
+    cnv.drawString(margem, 600, "maxMR")
+    eixo = 585
+    x = 0
     for i in maxMR:
-        cnv.drawString(150, eixo, str(i))
+        match x:
+            case 0:
+                cnv.drawString(margem, eixo, f"Carga: {i:.2f}")
+            case 1:
+                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f}")
+            case 2:
+                cnv.drawString(margem, eixo, f"Rede: {i:.2f}")
+            case 3:
+                cnv.drawString(margem, eixo, f"Bateria: {i:.2f}")
         eixo -= 15
+        x += 1
+
+    # Desenhando média microrrede
+    margem = 230
+    cnv.drawString(margem, 700, "mediaMR")
+    eixo = 685
+    x = 0
+    for i in mediaMR:
+        match x:
+            case 0:
+                cnv.drawString(margem, eixo, f"Carga: {i:.2f}")
+            case 1:
+                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f}")
+            case 2:
+                cnv.drawString(margem, eixo, f"Rede: {i:.2f}")
+            case 3:
+                cnv.drawString(margem, eixo, f"Bateria: {i:.2f}")
+        eixo -= 15
+        x += 1
 
     # Desenhando a min PDF
-    cnv.drawString(300, 620, "minMR")
-    eixo = 605
-    for i in mediaMR:
-        cnv.drawString(300, eixo, str(i))
+    margem = 230
+    cnv.drawString(margem, 600, "minMR")
+    eixo = 585
+    x = 0
+    for i in minMR:
+        match x:
+            case 0:
+                cnv.drawString(margem, eixo, f"Carga: {i:.2f}")
+            case 1:
+                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f}")
+            case 2:
+                cnv.drawString(margem, eixo, f"Rede: {i:.2f}")
+            case 3:
+                cnv.drawString(margem, eixo, f"Bateria: {i:.2f}")
         eixo -= 15
+        x += 1
+
+    # Desenhando preço total da micro
+    cnv.drawString(30, 510, "Preço final:")
+    cnv.drawString(350, 510, f"R$ {preco_final:.2f}")
+
+    # Desenhando preço compra exclusiva microrrede
+    cnv.drawString(30, 490, "Preço com carga exclusivamente alimentada pela rede:")
+    cnv.drawString(350, 490, f"R$ {preco_carga:.2f}")
+
+    # Desenhando preço total da micro
+    cnv.drawString(30, 470, "Preço no horário de maior consumo:")
+    cnv.drawString(350, 470, f"R$ {preco_max:.2f}")
+
+    # Desenhando preço total da micro
+    cnv.drawString(30, 450, "Preço do horário de menor consumo:")
+    cnv.drawString(350, 450, f"R$ {preco_min:.2f}")
 
     # Escolhendo o fluxograma do método de controle escolhido
     numMetodo = optionmenu_1.get()
