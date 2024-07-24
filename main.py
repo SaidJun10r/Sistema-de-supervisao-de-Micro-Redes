@@ -10,6 +10,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
+import time
 
 def leitorcsv():
     # Janela de busca de arquivos pelo Usúario
@@ -485,6 +486,52 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, preco_final, preco_carga, preco_max, p
 
     cnv.save()
 
+def funcaoLoop():
+    
+    # Escolhe por quanto tempo o loop rodara
+    tempLoop = optionmenu_2.get()
+    match tempLoop:
+        case "30 minutos":
+            tempo_total = 1800
+        case "1 hora":
+            tempo_total = 3600
+        case "4 horas":
+            tempo_total = 14400
+        case "8 horas":
+            tempo_total = 28800
+        case "12 horas":     
+            tempo_total = 43200
+        case "24 horas":     
+            tempo_total = 86400
+
+    # Escolhe o tempo de intervalo do loop
+    tempIntervalo = optionmenu_3.get()
+    match tempIntervalo:
+        case "5 segundos":
+            intervalo = 5
+        case "15 segundos":
+            intervalo = 15
+        case "30 segundos":
+            intervalo = 30
+        case "1 minuto":
+            intervalo = 60
+        case "5 minutos":     
+            intervalo = 300
+        case "15 minutos":     
+            intervalo = 900
+
+    inicio = time.time() # Inicia o timer
+    app.attributes("-fullscreen", "True") # Coloca o modo supervisorio em tela cheia
+
+    # Loop do modo de supervisão
+    while time.time() - inicio < tempo_total:
+        grafMicro()
+        app.update()
+        time.sleep(intervalo)
+        app.update()
+    
+    app.attributes("-fullscreen", "False") # Tira do modo tela cheia após o loop
+
 # Dados Estaticos
 somaMR = 0
 
@@ -591,10 +638,40 @@ button4 = customtkinter.CTkButton(master=frame_botoes,
                                   command=gerPDF)
 button4.grid(row=4, column=0, padx=(60, 20), pady=20, sticky="nsew")
 
+# Tempo do Loop
+optionmenu_2 = customtkinter.CTkOptionMenu(master=frame_botoes, 
+                                           dynamic_resizing=True, 
+                                           font=fonte_escrita,
+                                           values=["30 minutos", 
+                                                   "1 hora",
+                                                   "4 horas",
+                                                   "8 horas",
+                                                   "12 horas",
+                                                   "24 horas"])
+optionmenu_2.grid(row=5, column=0, padx=(60, 20), pady=20, sticky="nsew")
+
+# Intervalo do loop do Loop
+optionmenu_3 = customtkinter.CTkOptionMenu(master=frame_botoes, 
+                                           dynamic_resizing=True, 
+                                           font=fonte_escrita,
+                                           values=["5 segundos", 
+                                                   "15 segundos",
+                                                   "30 segundos",
+                                                   "1 minuto",
+                                                   "5 minutos",
+                                                   "15 minutos"])
+optionmenu_3.grid(row=6, column=0, padx=(60, 20), pady=20, sticky="nsew")
+
+# Loop
+button4 = customtkinter.CTkButton(master=frame_botoes, 
+                                  text="Iniciar modo de supervisão", 
+                                  font=fonte_escrita,
+                                  command=funcaoLoop)
+button4.grid(row=7, column=0, padx=(60, 20), pady=20, sticky="nsew")
+
 try:
     app.iconbitmap('images/ufsm.ico')
 except:
     print('ícone não carregado')
-
 
 app.mainloop()
