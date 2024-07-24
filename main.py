@@ -357,77 +357,77 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, preco_final, preco_carga, preco_max, p
 #####################################################################################
 
     # Desenho da microrrede
-    cnv.drawImage("images/Microrrede.png", 380, 720, width=170, height=70)
+    cnv.drawImage("images/Microrrede.png", 380, 720, width=100, height=70)
 
     # Desenhando a soma PDF
     margem = 30
-    cnv.drawString(margem, 700, "somaMR")
+    cnv.drawString(margem, 700, "Soma das medições dos pontos")
     eixo = 685
     x = 0
     for i in somaMR:
         match x:
             case 0:
-                cnv.drawString(margem, eixo, f"Carga: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Carga: {i:.2f} W")
             case 1:
-                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f} W")
             case 2:
-                cnv.drawString(margem, eixo, f"Rede: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Rede: {i:.2f} W")
             case 3:
-                cnv.drawString(margem, eixo, f"Bateria: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Bateria: {i:.2f} W")
         eixo -= 15
         x += 1
 
     # Desenhando a max PDF
     margem = 30
-    cnv.drawString(margem, 600, "maxMR")
+    cnv.drawString(margem, 600, "Valor máximo das medições dos pontos")
     eixo = 585
     x = 0
     for i in maxMR:
         match x:
             case 0:
-                cnv.drawString(margem, eixo, f"Carga: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Carga: {i:.2f} W")
             case 1:
-                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f} W")
             case 2:
-                cnv.drawString(margem, eixo, f"Rede: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Rede: {i:.2f} W")
             case 3:
-                cnv.drawString(margem, eixo, f"Bateria: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Bateria: {i:.2f} W")
         eixo -= 15
         x += 1
 
     # Desenhando média microrrede
-    margem = 230
-    cnv.drawString(margem, 700, "mediaMR")
+    margem = 260
+    cnv.drawString(margem, 700, "Médias das medições dos pontos")
     eixo = 685
     x = 0
     for i in mediaMR:
         match x:
             case 0:
-                cnv.drawString(margem, eixo, f"Carga: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Carga: {i:.2f} W")
             case 1:
-                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f} W")
             case 2:
-                cnv.drawString(margem, eixo, f"Rede: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Rede: {i:.2f} W")
             case 3:
-                cnv.drawString(margem, eixo, f"Bateria: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Bateria: {i:.2f} W")
         eixo -= 15
         x += 1
 
     # Desenhando a min PDF
-    margem = 230
-    cnv.drawString(margem, 600, "minMR")
+    margem = 260
+    cnv.drawString(margem, 600, "Valor mínimo das medições dos pontos")
     eixo = 585
     x = 0
     for i in minMR:
         match x:
             case 0:
-                cnv.drawString(margem, eixo, f"Carga: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Carga: {i:.2f} W")
             case 1:
-                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Geração Solar: {i:.2f} W")
             case 2:
-                cnv.drawString(margem, eixo, f"Rede: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Rede: {i:.2f} W")
             case 3:
-                cnv.drawString(margem, eixo, f"Bateria: {i:.2f}")
+                cnv.drawString(margem, eixo, f"Bateria: {i:.2f} W")
         eixo -= 15
         x += 1
 
@@ -451,15 +451,15 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, preco_final, preco_carga, preco_max, p
     numMetodo = optionmenu_1.get()
     match numMetodo:
         case "Método de controle 1":
-            cnv.drawImage("fluxogramas/flu1.png", 150, 75, width=300, height=300)
+            cnv.drawImage("fluxogramas/flu1.png", 150, 75, width=300, height=330)
         case "Método de controle 2":
-            cnv.drawImage("fluxogramas/flu2.png", 150, 75, width=300, height=300)
+            cnv.drawImage("fluxogramas/flu2.png", 150, 75, width=300, height=330)
         case "Método de controle 3":
-            cnv.drawImage("fluxogramas/flu3.png", 125, 75, width=350, height=300)
+            cnv.drawImage("fluxogramas/flu3.png", 125, 75, width=350, height=330)
         case "Método de controle 4":
-            cnv.drawImage("fluxogramas/flu4.png", 150, 75, width=300, height=300)
+            cnv.drawImage("fluxogramas/flu4.png", 150, 75, width=300, height=330)
         case "Método de controle 5":     
-            cnv.drawImage("fluxogramas/flu5.png", 125, 75, width=375, height=300)
+            cnv.drawImage("fluxogramas/flu5.png", 125, 75, width=375, height=330)
 
     # Rodapé
     cnv.drawString(10, 25, "Controle, Supervisão e Automação de Microredes")
