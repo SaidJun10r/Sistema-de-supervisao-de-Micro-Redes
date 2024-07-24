@@ -195,7 +195,7 @@ def dadosDinamicos(dadosMR):
     # Listas das somas de MR
     somaMR = [somCarga, somgerSolar, somBateria, somRede]
     
-    ssomaMR = f"Soma Carga: {somCarga:.2f}\nSoma Geração Solar: {somgerSolar:.2f}\nSoma Bateria: {somBateria:.2f}\nSoma Rede: {somRede:.2f}"
+    ssomaMR = f"Soma Carga: {somCarga:.2f} W\nSoma Geração Solar: {somgerSolar:.2f} W\nSoma Bateria: {somBateria:.2f} W\nSoma Rede: {somRede:.2f} W"
     
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
                                 text=f'{ssomaMR}',
@@ -219,7 +219,7 @@ def mediaDados(dadosMR):
     # Lista com todas as médias
     mediaMR = [medCarga, medgerSolar, medBateria, medRede]
     
-    smediaMR = f"Média Carga: {medCarga:.2f}\nMédia Geração Solar: {medgerSolar:.2f}\nMédia Bateria: {medBateria:.2f}\nMédia Rede: {medRede:.2f}"
+    smediaMR = f"Média Carga: {medCarga:.2f} W\nMédia Geração Solar: {medgerSolar:.2f} W\nMédia Bateria: {medBateria:.2f} W\nMédia Rede: {medRede:.2f} W"
     
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
                                 text=f"{smediaMR}",
@@ -242,7 +242,7 @@ def maxminDados(dadosMR):
     # Lista com máximos da MR
     maxMR = [maxCarga, maxgerSolar, maxBateria, maxRede]
     
-    smaxMR = f"Maxima Carga: {maxCarga:.2f}\nMaxima Geração Solar: {maxgerSolar:.2f}\nMaxima Bateria: {maxBateria:.2f}\nMaxima Rede: {maxRede:.2f}"
+    smaxMR = f"Maxima Carga: {maxCarga:.2f} W\nMaxima Geração Solar: {maxgerSolar:.2f} W\nMaxima Bateria: {maxBateria:.2f} W\nMaxima Rede: {maxRede:.2f} W"
     
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Máximos - Minímos"),
                                 text=f"{smaxMR}",
@@ -260,7 +260,7 @@ def maxminDados(dadosMR):
     # Lista com minímos das MR
     minMR = [minCarga, mingerSolar, minBateria, minRede]
     
-    sminMR = f"Maxima Carga: {minCarga:.2f}\nMaxima Geração Solar: {mingerSolar:.2f}\nMaxima Bateria: {minBateria:.2f}\nMaxima Rede: {minRede:.2f}"
+    sminMR = f"Maxima Carga: {minCarga:.2f} W\nMaxima Geração Solar: {mingerSolar:.2f} W\nMaxima Bateria: {minBateria:.2f} W\nMaxima Rede: {minRede:.2f} W"
     
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Máximos - Minímos"),
                                 text=f"{sminMR}",
@@ -544,7 +544,7 @@ fonte_escrita = 'Roboto', 12, 'bold'
 # Cria a janela e os parametros
 app = customtkinter.CTk()  # create CTk window like you do with the Tk window
 # app.attributes("-fullscreen", True)
-app.geometry("1250x860")
+app.geometry("1350x940")
 app.title("TCC II")
 
 
@@ -578,6 +578,7 @@ tabview.tab("Gráfico da Micro Rede").grid_rowconfigure(0, weight=1)
 tabview.tab("Previsão x Geração").grid_columnconfigure(0, weight=1)
 tabview.tab("Previsão x Geração").grid_rowconfigure(0, weight=1)
 tabview.tab("Rede x Carga").grid_columnconfigure(0, weight=1)
+tabview.tab("Rede x Carga").grid_rowconfigure(0, weight=1)
 
 # Tab View das informações
 tabviewinfo = customtkinter.CTkTabview(frame_dados, width=250)
@@ -596,6 +597,11 @@ try:
     logo_ufsm = customtkinter.CTkImage(light_image=Image.open('images/Dístico.png'), dark_image=Image.open('images/Dístico.png'), size=(200, 200))
     ufsm_label = customtkinter.CTkLabel(app, text='', image=logo_ufsm, bg_color='#e5e5e5')
     ufsm_label.grid(row=3, column=0, pady=10)
+    label = customtkinter.CTkLabel(master=app,
+                                text=f" TCC II\nSaid Ernandes de Moura Junior",
+                                font= ('Roboto', 14, 'bold'),
+                                bg_color='#e5e5e5')
+    label.grid(row=3, column=0, pady=(10, 20), sticky="s")
 except:
     print('Não carregou')
 
@@ -636,7 +642,13 @@ button4 = customtkinter.CTkButton(master=frame_botoes,
                                   text="Gerar relatório", 
                                   font=fonte_escrita,
                                   command=gerPDF)
-button4.grid(row=4, column=0, padx=(60, 20), pady=20, sticky="nsew")
+button4.grid(row=4, column=0, padx=(60, 20), pady=(20, 20), sticky="nsew")
+
+# Titulo botões
+label = customtkinter.CTkLabel(master=frame_botoes,
+                                text=f"Tempo de supervisão:",
+                                font= ('Roboto', 14, 'bold'))
+label.grid(row=5, column=0, padx=(60, 20), pady=(0, 0), sticky="nsew")
 
 # Tempo do Loop
 optionmenu_2 = customtkinter.CTkOptionMenu(master=frame_botoes, 
@@ -648,7 +660,12 @@ optionmenu_2 = customtkinter.CTkOptionMenu(master=frame_botoes,
                                                    "8 horas",
                                                    "12 horas",
                                                    "24 horas"])
-optionmenu_2.grid(row=5, column=0, padx=(60, 20), pady=20, sticky="nsew")
+optionmenu_2.grid(row=6, column=0, padx=(60, 20), pady=(5, 20), sticky="nsew")
+
+label = customtkinter.CTkLabel(master=frame_botoes,
+                                text=f"Intervalo de atualização:",
+                                font= ('Roboto', 14, 'bold'))
+label.grid(row=7, column=0, padx=(60, 20), pady=(0, 0), sticky="nsew")
 
 # Intervalo do loop do Loop
 optionmenu_3 = customtkinter.CTkOptionMenu(master=frame_botoes, 
@@ -660,14 +677,14 @@ optionmenu_3 = customtkinter.CTkOptionMenu(master=frame_botoes,
                                                    "1 minuto",
                                                    "5 minutos",
                                                    "15 minutos"])
-optionmenu_3.grid(row=6, column=0, padx=(60, 20), pady=20, sticky="nsew")
+optionmenu_3.grid(row=8, column=0, padx=(60, 20), pady=(5, 20), sticky="nsew")
 
 # Loop
 button4 = customtkinter.CTkButton(master=frame_botoes, 
                                   text="Iniciar modo de supervisão", 
                                   font=fonte_escrita,
                                   command=funcaoLoop)
-button4.grid(row=7, column=0, padx=(60, 20), pady=20, sticky="nsew")
+button4.grid(row=9, column=0, padx=(60, 20), pady=20, sticky="nsew")
 
 try:
     app.iconbitmap('images/ufsm.ico')
