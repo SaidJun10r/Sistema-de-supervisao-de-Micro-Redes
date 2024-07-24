@@ -200,10 +200,10 @@ def dadosDinamicos(dadosMR):
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
                                 text=f'{ssomaMR}',
                                 font= ('Roboto', 20, 'bold'),
-                                width=200,
+                                width=150,
                                 height=25,
-                                corner_radius=8)
-    label.grid(row=0, column=0, padx=20, pady=10, sticky="news")
+                                corner_radius=2)
+    label.grid(row=0, column=0, padx=(60, 20), pady=10, sticky="nws")
 
     return somaMR
 
@@ -224,10 +224,10 @@ def mediaDados(dadosMR):
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Total - Média"),
                                 text=f"{smediaMR}",
                                 font= ('Roboto', 20, 'bold'),
-                                width=200,
+                                width=150,
                                 height=25,
-                                corner_radius=8)
-    label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
+                                corner_radius=2)
+    label.grid(row = 0, column=1, padx=(20,60), pady=10, sticky="news")
 
     return mediaMR
 
@@ -605,12 +605,14 @@ try:
 except:
     print('Não carregou')
 
+padx = (60, 20)
+
 # Botão
 button2 = customtkinter.CTkButton(master=frame_botoes, 
                                   text="Selecionar CSV", 
                                   font=fonte_escrita,
                                   command= leitorcsv)
-button2.grid(row=0, column=0, padx=(60, 20), pady=20, sticky="nsew")
+button2.grid(row=0, column=0, padx=padx, pady=20, sticky="nsew")
 
 # Tipo de controle aplicado na microrede
 optionmenu_1 = customtkinter.CTkOptionMenu(master=frame_botoes, 
@@ -621,34 +623,34 @@ optionmenu_1 = customtkinter.CTkOptionMenu(master=frame_botoes,
                                                    "Método de controle 3",
                                                    "Método de controle 4",
                                                    "Método de controle 5"])
-optionmenu_1.grid(row=1, column=0, padx=(60, 20), pady=20, sticky="nsew")
+optionmenu_1.grid(row=1, column=0, padx=padx, pady=20, sticky="nsew")
 
 # Botão para plotar o gráfico
 button2 = customtkinter.CTkButton(master=frame_botoes, 
                                   text="Plotar Gráfico", 
                                   font=fonte_escrita,
                                   command=grafMicro)
-button2.grid(row=2, column=0, padx=(60, 20), pady=20, sticky="nsew")
+button2.grid(row=2, column=0, padx=padx, pady=20, sticky="news")
 
 # Local de saída
 button3 = customtkinter.CTkButton(master=frame_botoes, 
                                   text="Saída do controle", 
                                   font=fonte_escrita,
                                   command=saidaControle)
-button3.grid(row=3, column=0, padx=(60, 20), pady=20, sticky="nsew")
+button3.grid(row=3, column=0, padx=padx, pady=20, sticky="news")
 
 # Gerar PDF
 button4 = customtkinter.CTkButton(master=frame_botoes, 
                                   text="Gerar relatório", 
                                   font=fonte_escrita,
                                   command=gerPDF)
-button4.grid(row=4, column=0, padx=(60, 20), pady=(20, 20), sticky="nsew")
+button4.grid(row=4, column=0, padx=padx, pady=(20, 20), sticky="nsew")
 
 # Titulo botões
 label = customtkinter.CTkLabel(master=frame_botoes,
                                 text=f"Tempo de supervisão:",
                                 font= ('Roboto', 14, 'bold'))
-label.grid(row=5, column=0, padx=(60, 20), pady=(0, 0), sticky="nsew")
+label.grid(row=5, column=0, padx=padx, pady=(0, 0), sticky="nsew")
 
 # Tempo do Loop
 optionmenu_2 = customtkinter.CTkOptionMenu(master=frame_botoes, 
@@ -660,12 +662,12 @@ optionmenu_2 = customtkinter.CTkOptionMenu(master=frame_botoes,
                                                    "8 horas",
                                                    "12 horas",
                                                    "24 horas"])
-optionmenu_2.grid(row=6, column=0, padx=(60, 20), pady=(5, 20), sticky="nsew")
+optionmenu_2.grid(row=6, column=0, padx=padx, pady=(5, 20), sticky="nsew")
 
 label = customtkinter.CTkLabel(master=frame_botoes,
                                 text=f"Intervalo de atualização:",
                                 font= ('Roboto', 14, 'bold'))
-label.grid(row=7, column=0, padx=(60, 20), pady=(0, 0), sticky="nsew")
+label.grid(row=7, column=0, padx=padx, pady=(0, 0), sticky="nsew")
 
 # Intervalo do loop do Loop
 optionmenu_3 = customtkinter.CTkOptionMenu(master=frame_botoes, 
@@ -677,14 +679,14 @@ optionmenu_3 = customtkinter.CTkOptionMenu(master=frame_botoes,
                                                    "1 minuto",
                                                    "5 minutos",
                                                    "15 minutos"])
-optionmenu_3.grid(row=8, column=0, padx=(60, 20), pady=(5, 20), sticky="nsew")
+optionmenu_3.grid(row=8, column=0, padx=padx, pady=(5, 20), sticky="nsew")
 
 # Loop
 button4 = customtkinter.CTkButton(master=frame_botoes, 
                                   text="Iniciar modo de supervisão", 
                                   font=fonte_escrita,
                                   command=funcaoLoop)
-button4.grid(row=9, column=0, padx=(60, 20), pady=20, sticky="nsew")
+button4.grid(row=9, column=0, padx=padx, pady=20, sticky="nsew")
 
 try:
     app.iconbitmap('images/ufsm.ico')
