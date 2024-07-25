@@ -605,7 +605,8 @@ try:
 except:
     print('Não carregou')
 
-padx = (60, 20)
+# Botões da interface
+padx = (60, 20) # Tamanho botões
 
 # Botão
 button2 = customtkinter.CTkButton(master=frame_botoes, 
