@@ -226,7 +226,7 @@ def mediaDados(dadosMR):
                                 width=150,
                                 height=25,
                                 corner_radius=2)
-    label.grid(row = 0, column=1, padx=(20,60), pady=10, sticky="news")
+    label.grid(row = 0, column=1, padx=(60,20), pady=10, sticky="news")
 
     return mediaMR
 
@@ -249,7 +249,7 @@ def maxminDados(dadosMR):
                                 width=200,
                                 height=25,
                                 corner_radius=8)
-    label.grid(row=0, column=0, padx=20, pady=10, sticky="news")
+    label.grid(row=0, column=0, padx=(60, 20), pady=10, sticky="news")
 
     # Minimo dos dados
     minCarga = min(carga)
@@ -267,7 +267,7 @@ def maxminDados(dadosMR):
                                 width=200,
                                 height=25,
                                 corner_radius=8)
-    label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
+    label.grid(row = 0, column=1, padx=(60, 20), pady=10, sticky="news")
 
     return maxMR, minMR
 
@@ -280,7 +280,7 @@ def dadosMon(dadosMR):
     # Quanto foi pago    
     preco_final=0
     for i in range(len(rede)):
-        preco_final += rede[i] * preco_energia
+        preco_final += rede[i] * -preco_energia
 
     # Quanto pagaria só comprando da rede
     preco_carga = 0
@@ -296,7 +296,7 @@ def dadosMon(dadosMR):
     # Quanto foi pago o horário de minima compra
     preco_min = min(rede) * preco_energia
 
-    precominmax = f"\nPreço no horário de\nmaior consumo: R$ {preco_max:.2f}\n\nPreço do horário de\nmenor consumo: R$ {preco_min:.2f}"
+    precominmax = f"\nPreço no horário de\nmaior consumo da rede: R$ {preco_max:.2f}\n\nPreço do horário de\nmenor consumo da rede: R$ {preco_min:.2f}"
 
     # Preço da rede inteira
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Monetário"),
@@ -305,7 +305,7 @@ def dadosMon(dadosMR):
                                 width=200,
                                 height=25,
                                 corner_radius=8)
-    label.grid(row=0, column=0, padx=20, pady=10, sticky="news")
+    label.grid(row=0, column=0, padx=(60, 20), pady=10, sticky="news")
 
     # Preço 
     label = customtkinter.CTkLabel(master = tabviewinfo.tab("Monetário"),
@@ -314,7 +314,7 @@ def dadosMon(dadosMR):
                                 width=200,
                                 height=25,
                                 corner_radius=8)
-    label.grid(row = 0, column=1, padx=20, pady=10, sticky="news")
+    label.grid(row = 0, column=1, padx=(60, 20), pady=10, sticky="news")
 
     return preco_final, preco_carga, preco_max, preco_min
 
@@ -440,12 +440,14 @@ def gerPDF(somaMR, mediaMR, maxMR, minMR, preco_final, preco_carga, preco_max, p
     cnv.drawString(350, 490, f"R$ {preco_carga:.2f}")
 
     # Desenhando preço total da micro
-    cnv.drawString(30, 470, "Preço no horário de maior consumo:")
+    cnv.drawString(30, 470, "Preço no horário de maior consumo da rede:")
     cnv.drawString(350, 470, f"R$ {preco_max:.2f}")
 
     # Desenhando preço total da micro
-    cnv.drawString(30, 450, "Preço do horário de menor consumo:")
+    cnv.drawString(30, 450, "Preço do horário de menor consumo da rede:")
     cnv.drawString(350, 450, f"R$ {preco_min:.2f}")
+
+    cnv.drawString(160, 430, "(Preços com sinal de negativo indicam lucro)")
 
     # Escolhendo o fluxograma do método de controle escolhido
     numMetodo = optionmenu_1.get()
