@@ -545,7 +545,7 @@ fonte_escrita = 'Roboto', 12, 'bold'
 app = customtkinter.CTk()  # create CTk window like you do with the Tk window
 # app.attributes("-fullscreen", True)
 app.geometry("1350x940")
-app.title("TCC II")
+app.title("Sistema de Supervisão de Micro Redes")
 
 
 app.grid_columnconfigure((0, 1), weight=1)
