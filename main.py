@@ -2,6 +2,7 @@ import modelos
 import customtkinter
 from customtkinter import filedialog
 from tkinter import *
+from tkinter import messagebox
 from matplotlib.figure import Figure 
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 import pandas as pd
@@ -60,7 +61,11 @@ def calBatRede():
 
 def grafMicro(): 
 
-    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
+    try:
+        horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
+    except:
+        messagebox.showwarning("Sem dados!", "Não foi selecionado dados ou os selecionados são invalidos!")
+        return
 
     # the figure that will contain the plot 
     fig = Figure(figsize = (8, 4), 
@@ -520,17 +525,22 @@ def funcaoLoop():
         case "15 minutos":     
             intervalo = 900
 
-    inicio = time.time() # Inicia o timer
-    app.attributes("-fullscreen", "True") # Coloca o modo supervisorio em tela cheia
+    resposta = messagebox.askyesno("Modo de supervisão", "Entrar no modo de supervisão?")
 
-    # Loop do modo de supervisão
-    while time.time() - inicio < tempo_total:
-        grafMicro()
-        app.update()
-        time.sleep(intervalo)
-        app.update()
-    
-    app.attributes("-fullscreen", "False") # Tira do modo tela cheia após o loop
+    if resposta == True:
+        inicio = time.time() # Inicia o timer
+        app.attributes("-fullscreen", "True") # Coloca o modo supervisorio em tela cheia
+
+        # Loop do modo de supervisão
+        while time.time() - inicio < tempo_total:
+            grafMicro()
+            app.update()
+            time.sleep(intervalo)
+            app.update()
+        
+        app.attributes("-fullscreen", "False") # Tira do modo tela cheia após o loop
+    else:
+        return
 
 # Dados Estaticos
 somaMR = 0
@@ -554,7 +564,7 @@ app.grid_rowconfigure((0, 1, 2, 3), weight=1)
 
 
 # Frames
-frame_botoes = customtkinter.CTkFrame(app)
+frame_botoes = customtkinter.CTkScrollableFrame(app)
 frame_botoes.grid(row=0, column=0, rowspan=3, padx=(20, 20), pady=(20, 10), sticky="nsew")
 frame_graf = customtkinter.CTkFrame(app)
 frame_graf.grid(row=0, rowspan=3, column=1, columnspan=2, padx=(20, 20), pady=(20, 10), sticky="news")
