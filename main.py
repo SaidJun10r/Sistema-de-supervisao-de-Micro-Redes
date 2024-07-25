@@ -102,7 +102,7 @@ def grafMicro():
     fig.savefig('graficos/grafMR.png')
 
     # Dados dinamicos mostrados
-    dadosMR = calBatRede()
+    dadosMR = horas, carga, gerSolar, cargaVE, previsao, bateria, rede
     somaMR = dadosDinamicos(dadosMR)
     mediaMR = mediaDados(dadosMR)
     maxMR, minMR = maxminDados(dadosMR)
@@ -114,16 +114,11 @@ def grafMicro():
     # containing the Matplotlib figure 
     canvas = FigureCanvasTkAgg(fig, master = tabview.tab("Gráfico da Micro Rede"))   
     canvas.draw() 
-
-    #PUXANDO GERXPREV
-    grafGerPrev()
-    grafRedCarg()
   
     # placing the canvas on the Tkinter window 
     canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
 
-def grafGerPrev():
-    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
+########################## Gráfico de Geração x Previsão #####################################
 
     # the figure that will contain the plot 
     fig = Figure(figsize = (8, 4), 
@@ -153,10 +148,9 @@ def grafGerPrev():
     canvas.draw() 
   
     # placing the canvas on the Tkinter window 
-    canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news") 
+    canvas.get_tk_widget().grid(row=0, column=0, padx=(10, 10), pady=(10, 10), sticky="news")
 
-def grafRedCarg():
-    horas, carga, gerSolar, cargaVE, previsao, bateria, rede = calBatRede()
+ ################################# Gráfico de Rede x Carga ######################################
 
     # the figure that will contain the plot 
     fig = Figure(figsize = (8, 4), 
@@ -616,7 +610,7 @@ except:
     print('Não carregou')
 
 # Botões da interface
-padx = (60, 20) # Tamanho botões
+padx = (20, 20) # Tamanho botões
 
 # Botão
 button2 = customtkinter.CTkButton(master=frame_botoes, 

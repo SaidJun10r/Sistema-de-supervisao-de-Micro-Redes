@@ -6,14 +6,14 @@ def gravacaoSaida(comControle):
         with open("inputs/out.txt", 'r') as caminho:
             # Lendo todas as linhas do arquivo e armazenando em uma lista
             local_arquivo = caminho.readlines()
+    # Abrindo o arquivo em modo de escrita ('w' para write)
+        with open(f"{str(local_arquivo[0])}/controleMR.txt", 'w') as controle:
+        # Escrevendo cada linha dos dados no arquivo
+            for j in range(len(comControle)):
+                controle.write(f"[{comControle[j]}]\n")  # Adiciona uma quebra de linha ao final de cada linha
     except:
         messagebox.showwarning("Local da saída invalído!", "O local do documento de controle não foi selecionado ou é inválido!")
         return
-    # Abrindo o arquivo em modo de escrita ('w' para write)
-    with open(f"{str(local_arquivo[0])}/controleMR.txt", 'w') as controle:
-        # Escrevendo cada linha dos dados no arquivo
-        for j in range(len(comControle)):
-            controle.write(f"[{comControle[j]}]\n")  # Adiciona uma quebra de linha ao final de cada linha
 
 def edc1(horas, carga, gerSolar, maxBateria=4000):
     bateria = [i - i for i in horas]
