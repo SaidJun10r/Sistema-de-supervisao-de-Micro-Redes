@@ -552,8 +552,8 @@ app.geometry("1350x940")
 app.title("Sistema de Supervisão de Micro Redes")
 
 
-app.grid_columnconfigure((0, 1), weight=1)
-app.grid_columnconfigure((2), weight=10)
+app.grid_columnconfigure((0), weight=1)
+app.grid_columnconfigure((1, 2), weight=10)
 app.grid_rowconfigure((0, 1, 2, 3), weight=1)
 
 
@@ -562,8 +562,8 @@ frame_botoes = customtkinter.CTkScrollableFrame(app)
 frame_botoes.grid(row=0, column=0, rowspan=3, padx=(20, 20), pady=(20, 10), sticky="nsew")
 frame_graf = customtkinter.CTkFrame(app)
 frame_graf.grid(row=0, rowspan=3, column=1, columnspan=2, padx=(20, 20), pady=(20, 10), sticky="news")
-frame_graf.grid_columnconfigure((0), weight=1)
-frame_graf.grid_rowconfigure((0), weight=1)
+frame_graf.grid_columnconfigure((0), weight=10)
+frame_graf.grid_rowconfigure((0), weight=10)
 frame_dados = customtkinter.CTkFrame(app)
 frame_dados.grid(row=3, column=1, columnspan=2, padx=(20, 20), pady=(20, 10), sticky="news")
 frame_dados.grid_columnconfigure((0, 1), weight=1)
