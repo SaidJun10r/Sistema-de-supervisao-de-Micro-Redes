@@ -1,6 +1,6 @@
 # Software desenvolvido como TCC II por Said Júnior
 
-![Alt ou título da imagem](URL da imagem)
+![Sistema de Supervisão da Microrrede](https://github.com/SaidJun10r/Sistema-de-supervisao-de-Micro-Redes/blob/main/images/gifPrograma.gif?raw=true)
 
 ## Para fazer uma análise estática dos dados:
 1. Selecione a fonte dos dados da microrrede em CSV
