@@ -634,7 +634,7 @@ optionmenu_1.grid(row=1, column=0, padx=padx, pady=20, sticky="nsew")
 
 # Botão para plotar o gráfico
 button2 = customtkinter.CTkButton(master=frame_botoes, 
-                                  text="Plotar Gráfico", 
+                                  text="Plotar gráfico", 
                                   font=fonte_escrita,
                                   command=grafMicro)
 button2.grid(row=2, column=0, padx=padx, pady=20, sticky="news")
