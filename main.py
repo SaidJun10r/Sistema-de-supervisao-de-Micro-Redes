@@ -91,6 +91,7 @@ def grafMicro():
     if optionmenu_1.get() == "Método de controle 3" or optionmenu_1.get() == "Método de controle 4" or optionmenu_1.get() == "Método de controle 5":
         grafControle.bar([i + 0.8 for i in range(len(horas))], cargaVE, label='Carga do VE',color = 'lightblue', width=0.2)
   
+    grafControle.set_ybound(-3000, 6000)
     grafControle.set_xlabel('Pontos')
     grafControle.set_ylabel("Energia")
     grafControle.axhline(0, color='black', linestyle='-')

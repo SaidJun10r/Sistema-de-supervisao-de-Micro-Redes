@@ -1,6 +1,6 @@
 # Software desenvolvido como TCC II por Said Júnior
 
-![Sistema de Supervisão da Microrrede](https://github.com/SaidJun10r/Sistema-de-supervisao-de-Micro-Redes/blob/main/images/gifPrograma.gif?raw=true)
+![Sistema de Supervisão da Microrrede](https://github.com/SaidJun10r/Sistema-de-supervisao-de-Micro-Redes/blob/main/images/gifProgramafixo.gif?raw=true)
 
 ## Como usar o _software_:
 
